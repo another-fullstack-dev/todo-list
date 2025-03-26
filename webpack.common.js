@@ -39,5 +39,6 @@ module.exports = {
     minimizer: [
       new CssMinimizerPlugin(),
     ],
+    minimize: true,
   },
 };
