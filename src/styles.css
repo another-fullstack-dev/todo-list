@@ -24,10 +24,11 @@ header {
 #content {
     flex: 1;
     display: grid;
-    grid-template-columns: repeat(auto-fit, 200px);
+    grid-template-columns: repeat(auto-fit, 400px);
     gap: 8px;
     overflow-y: scroll;
     padding: 16px;
+    justify-content: center;
 }
 
 .sidebar {
@@ -43,7 +44,9 @@ header {
 
 #content > div {
     background-color: var(--secondary-color);
-    min-width: 200px;
-    min-height: 200px;
+    min-width: 400px;
+    min-height: 400px;
+    max-width: 400px;
+    max-height: 400px;
     padding: 8px;
 }
