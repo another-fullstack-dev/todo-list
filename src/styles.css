@@ -14,6 +14,7 @@ header {
     height: 48px;
     border-bottom: 2px solid black;
     background-color: var(--secondary-color);
+    display: flex;
 }
 
 .container {
@@ -21,12 +22,15 @@ header {
     height: calc(100vh - 48px); /* is that really how its done? */
 }
 
-#content {
+.project {
     flex: 1;
+    overflow-y: scroll;
+}
+
+#content {
     display: grid;
     grid-template-columns: repeat(auto-fit, 400px);
     gap: 8px;
-    overflow-y: scroll;
     padding: 16px;
     justify-content: center;
 }
@@ -42,11 +46,32 @@ header {
     background-color: var(--secondary-color);
 }
 
-#content > div {
+.todo {
     background-color: var(--secondary-color);
     min-width: 400px;
     min-height: 400px;
     max-width: 400px;
     max-height: 400px;
     padding: 8px;
+    display: flex;
+    flex-direction: column;
+}
+
+.todo > p {
+    flex: 1;
+}
+
+footer {
+    margin-top: auto;
+    text-align: end;
+}
+
+footer > * {
+    margin-right: 4px;
+}
+
+nav {
+    flex: 1;
+    display: flex;
+    flex-direction: row-reverse;
 }

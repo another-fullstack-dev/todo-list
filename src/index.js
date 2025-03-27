@@ -2,6 +2,7 @@ import "./styles.css";
 import { createTodo } from "./domLogic";
 
 const content = document.querySelector('#content');
+const addTodoBtn = document.querySelector('.add');
 
 class Todo {
     constructor(title, description = '', dueDate = '', priority = '') {
@@ -9,6 +10,7 @@ class Todo {
         this.description = description;
         this.dueDate = dueDate;
         this.priority = priority;
+        this.completed = false;
     };
 
     set title(value){
@@ -32,3 +34,5 @@ function dummytodo(){
     content.appendChild(createTodo(bob));
     return bob;
 };dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();
+
+export { dummytodo };
