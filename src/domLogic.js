@@ -1,4 +1,4 @@
-import { dummytodo } from "./index";
+import { dummytodo, Todo } from "./index";
 
 function createTodo(object) {
     let div = document.createElement('div');
@@ -22,6 +22,7 @@ function createTodo(object) {
     
     removeBtn.addEventListener('click', () => {
         content.removeChild(div);
+        localStorage.removeItem(object.title);
     })
 
     div.appendChild(h2);
@@ -40,7 +41,35 @@ function createTodo(object) {
     return div;
 }
 
+const dialogCreateTodo = document.querySelector('dialog');
 const addTodoBtn = document.querySelector('.add');
-addTodoBtn.addEventListener('click', dummytodo); // for now
+const closeModal = document.querySelector('.close');
+addTodoBtn.addEventListener('click', () => {
+    dialogCreateTodo.showModal();
+});
+closeModal.addEventListener('click', () => {
+    dialogCreateTodo.close();
+    inputs.forEach((node)=>{
+        node.value = '';
+    });
+})
+
+const inputs = document.querySelectorAll('form > input');
+
+const todoForm = document.querySelector('form');
+todoForm.addEventListener('submit', () => {
+    try {
+        let array = []
+        inputs.forEach((node)=>{
+            array.push(node.value);
+            node.value = '';
+        });
+        let todo = new Todo(array[0],array[1],array[2],array[3]);
+        content.appendChild(createTodo(todo));
+        localStorage.setItem(todo.title, JSON.stringify(todo));
+    } catch {
+        alert('Please enter a title'); // todo: remove this
+    }
+});
 
 export {createTodo};
