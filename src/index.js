@@ -25,7 +25,12 @@ class Todo {
     }
 };
 
-// lol
+for (let i = 0; i < localStorage.length; i++){
+    let item = JSON.parse((localStorage.getItem(localStorage.key(i)))); // even if i set the prototype of Todo get and set still wont work. i dont get it.
+    item.title = item._title; // this works but im pretty sure it is NOT how its done. this IS a bandaid solution.
+    content.appendChild(createTodo(item));
+}
+
 function dummytodo(){
     let bob = new Todo("joe", "jooo baiden", "yesterday", "omegadontcare");
     console.log(bob);

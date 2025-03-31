@@ -16,8 +16,12 @@ function createTodo(object) {
     footer.appendChild(removeBtn);
     
     completedBtn.addEventListener('click', () => {
+        if (object.completed){
+            return;
+        };
         object.completed = true;
         div.style.opacity = 0.5;
+        localStorage.setItem(object.title, JSON.stringify(object));
     })
     
     removeBtn.addEventListener('click', () => {
@@ -35,6 +39,10 @@ function createTodo(object) {
     prioSpan.textContent = object.priority;
     completedBtn.textContent = "Mark as completed"
     removeBtn.textContent = "X";
+
+    if (object.completed){
+        div.style.opacity = 0.5;
+    }
 
     div.classList.add('todo')
 
@@ -59,14 +67,15 @@ const inputs = document.querySelectorAll('form > input');
 const todoForm = document.querySelector('form');
 todoForm.addEventListener('submit', () => {
     try {
-        let array = []
+        let array = [];
         inputs.forEach((node)=>{
             array.push(node.value);
             node.value = '';
         });
         let todo = new Todo(array[0],array[1],array[2],array[3]);
-        content.appendChild(createTodo(todo));
-        localStorage.setItem(todo.title, JSON.stringify(todo));
+        let element = createTodo(todo)
+        content.appendChild(element);
+        localStorage.setItem(todo.title, JSON.stringify(todo)); // does it belong here? also removes the prototype of Todo class
     } catch {
         alert('Please enter a title'); // todo: remove this
     }
