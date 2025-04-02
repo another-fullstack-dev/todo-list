@@ -1,7 +1,14 @@
 import "./styles.css";
-import { createTodo } from "./domLogic";
+import { createTodo, createProject } from "./domLogic";
+
+if (localStorage.getItem("projectBin")){
+} else {
+    localStorage.setItem("projectBin", JSON.stringify([]));
+}
 
 const content = document.querySelector('#content');
+const projectDiv = document.querySelector('.project');
+const projectList = document.querySelector('.project-list');
 
 class Todo {
     constructor(title, description = '', dueDate = '', priority = '') {
@@ -25,10 +32,37 @@ class Todo {
     }
 };
 
-for (let i = 0; i < localStorage.length; i++){
+class Project {
+    constructor(title) {
+        this.title = title;
+        this.todos = [];
+    }
+
+    set title(value){
+        value = value.trim();
+        if (value.length < 1){
+            throw new Error("Please enter a title");
+        }
+        this._title = value;
+    }
+
+    get title(){
+        return this._title;
+    }
+}
+
+for (let i = 0; i < localStorage.length - 1; i++){
+    if (Array.isArray(JSON.parse(localStorage.getItem(localStorage.key(i))))){
+        continue;
+    }
     let item = JSON.parse((localStorage.getItem(localStorage.key(i)))); // even if i set the prototype of Todo get and set still wont work. i dont get it.
-    item.title = item._title; // this works but im pretty sure it is NOT how its done. this IS a bandaid solution.
+    item.title = item._title; // please...
     content.appendChild(createTodo(item));
+}
+
+let projectBin = JSON.parse(localStorage.getItem("projectBin")); 
+for (let i = 0; i < projectBin.length; i++) {
+    projectList.appendChild(createProject(projectBin[i]));
 }
 
 function dummytodo(){
@@ -38,4 +72,4 @@ function dummytodo(){
     return bob;
 };/* dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo(); */
 
-export { dummytodo, Todo };
+export { content, projectDiv, projectList, Todo, Project };

@@ -1,4 +1,4 @@
-import { dummytodo, Todo } from "./index";
+import { content, projectDiv, projectList, Todo, Project } from "./index";
 
 function createTodo(object) {
     let div = document.createElement('div');
@@ -47,38 +47,81 @@ function createTodo(object) {
     div.classList.add('todo')
 
     return div;
-}
+};
 
-const dialogCreateTodo = document.querySelector('dialog');
+const dialogCreateTodo = document.querySelector('.dialog-todo');
+const dialogCreateProject = document.querySelector('.dialog-project');
 const addTodoBtn = document.querySelector('.add');
-const closeModal = document.querySelector('.close');
+const addProjectBtn = document.querySelector('.btn-add-project');
+const closeModal = document.querySelectorAll('.close');
+const inputsTodo = document.querySelectorAll('.form-todo > input');
+const inputsProject = document.querySelectorAll('.form-project > input');
+const inputs = document.querySelectorAll('form > input');
+
+function createProject(object){
+    let p = document.createElement('p');
+    p.textContent = object._title;
+    
+    return p;
+};
+
 addTodoBtn.addEventListener('click', () => {
     dialogCreateTodo.showModal();
 });
-closeModal.addEventListener('click', () => {
-    dialogCreateTodo.close();
-    inputs.forEach((node)=>{
-        node.value = '';
-    });
+
+addProjectBtn.addEventListener('click', () => {
+    dialogCreateProject.showModal();
 })
 
-const inputs = document.querySelectorAll('form > input');
+closeModal.forEach((button) => {
+    button.addEventListener('click', () => {
+        button.parentElement.parentElement.parentElement.close(); // ok
+        inputs.forEach((node)=>{
+        node.value = '';
+    });
+    })
+})
 
-const todoForm = document.querySelector('form');
+const projectForm = document.querySelector('.form-project');
+projectForm.addEventListener('submit', () => {
+    try {
+        let array = [];
+        inputsProject.forEach((node)=>{
+            array.push(node.value);
+            node.value = '';
+        });
+        let project = new Project(array[0]);
+        projectList.appendChild(createProject(project));
+        let projects = JSON.parse(localStorage.getItem("projectBin"));
+        projects.push(project);
+        localStorage.setItem("projectBin", JSON.stringify(projects));
+    } catch {
+        if(Error.message == "Please enter a title"){
+            alert('Please enter a title'); // todo: remove this
+        } else {
+            alert('Something went wrong');
+        };
+    }
+});
+
+const todoForm = document.querySelector('.form-todo');
 todoForm.addEventListener('submit', () => {
     try {
         let array = [];
-        inputs.forEach((node)=>{
+        inputsTodo.forEach((node)=>{
             array.push(node.value);
             node.value = '';
         });
         let todo = new Todo(array[0],array[1],array[2],array[3]);
-        let element = createTodo(todo)
-        content.appendChild(element);
-        localStorage.setItem(todo.title, JSON.stringify(todo)); // does it belong here? also removes the prototype of Todo class
+        content.appendChild(createTodo(todo));
+        localStorage.setItem(todo.title, JSON.stringify(todo));
     } catch {
-        alert('Please enter a title'); // todo: remove this
+        if(Error.message == "Please enter a title"){
+            alert('Please enter a title'); // todo: remove this
+        } else {
+            alert('Something went wrong');
+        };
     }
 });
 
-export {createTodo};
+export { createTodo, createProject };
