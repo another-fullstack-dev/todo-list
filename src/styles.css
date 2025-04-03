@@ -104,3 +104,7 @@ dialog {
     height: 100px;
     overflow-wrap: anywhere;
 }
+
+.project-list > li > p:hover{
+    text-decoration: underline;
+}

@@ -4,11 +4,14 @@ import { createTodo, createProject } from "./domLogic";
 if (localStorage.getItem("projectBin")){
 } else {
     localStorage.setItem("projectBin", JSON.stringify([]));
-}
+};
+
+localStorage.setItem("project", "Default");
 
 const content = document.querySelector('#content');
 const projectDiv = document.querySelector('.project');
 const projectList = document.querySelector('.project-list');
+const projectSelect = document.querySelector('#project-select');
 
 class Todo {
     constructor(title, description = '', dueDate = '', priority = '') {
@@ -51,7 +54,7 @@ class Project {
     }
 }
 
-for (let i = 0; i < localStorage.length - 1; i++){
+for (let i = 0; i < localStorage.length; i++){
     if (Array.isArray(JSON.parse(localStorage.getItem(localStorage.key(i))))){
         continue;
     }
@@ -60,16 +63,17 @@ for (let i = 0; i < localStorage.length - 1; i++){
     content.appendChild(createTodo(item));
 }
 
-let projectBin = JSON.parse(localStorage.getItem("projectBin")); 
+let projectBin = JSON.parse(localStorage.getItem("projectBin"));
 for (let i = 0; i < projectBin.length; i++) {
+    projectBin[i].title = projectBin[i]._title;
     projectList.appendChild(createProject(projectBin[i]));
 }
 
 function dummytodo(){
     let bob = new Todo("joe", "jooo baiden", "yesterday", "omegadontcare");
     console.log(bob);
-    content.appendChild(createTodo(bob));
+    /* content.appendChild(createTodo(bob)); */
     return bob;
 };/* dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo();dummytodo(); */
 
-export { content, projectDiv, projectList, Todo, Project };
+export { content, projectDiv, projectList, projectSelect, Todo, Project };

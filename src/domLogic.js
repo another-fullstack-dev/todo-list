@@ -1,4 +1,4 @@
-import { content, projectDiv, projectList, Todo, Project } from "./index";
+import { content, projectDiv, projectList, projectSelect, Todo, Project } from "./index";
 
 function createTodo(object) {
     let div = document.createElement('div');
@@ -57,16 +57,50 @@ const closeModal = document.querySelectorAll('.close');
 const inputsTodo = document.querySelectorAll('.form-todo > input');
 const inputsProject = document.querySelectorAll('.form-project > input');
 const inputs = document.querySelectorAll('form > input');
+const selectProject = document.querySelector('#project-select');
+
+const mainProject = document.querySelector('.main-page-li');
+mainProject.addEventListener('click', () => {
+    clearContent();
+    for (let i = 0; i < localStorage.length; i++){
+        if (Array.isArray(JSON.parse(localStorage.getItem(localStorage.key(i))))){
+            continue;
+        }
+        let item = JSON.parse((localStorage.getItem(localStorage.key(i))));
+        item.title = item._title;
+        content.appendChild(createTodo(item));
+    };
+});
 
 function createProject(object){
     let p = document.createElement('p');
-    p.textContent = object._title;
-    
-    return p;
+    let li = document.createElement('li');
+    li.appendChild(p);
+    p.textContent = object.title;
+    li.addEventListener('click', () => {
+        clearContent();
+        localStorage.setItem("project", p.textContent);
+        object.todos.forEach(todo => {
+            content.appendChild(createTodo(todo));
+        });
+    });
+
+    return li;
 };
+
+function updateProjectList(){
+    let projectBin = JSON.parse(localStorage.getItem("projectBin"));
+    for (let i = 0; i < projectBin.length; i++) {
+        let option = document.createElement('option');
+        option.setAttribute('value', projectBin[i]._title);
+        option.textContent = projectBin[i]._title;
+        projectSelect.appendChild(option);
+    }
+}
 
 addTodoBtn.addEventListener('click', () => {
     dialogCreateTodo.showModal();
+    updateProjectList();
 });
 
 addProjectBtn.addEventListener('click', () => {
@@ -114,6 +148,7 @@ todoForm.addEventListener('submit', () => {
         });
         let todo = new Todo(array[0],array[1],array[2],array[3]);
         content.appendChild(createTodo(todo));
+        localStorage.setItem("projectBin", JSON.stringify(projects));
         localStorage.setItem(todo.title, JSON.stringify(todo));
     } catch {
         if(Error.message == "Please enter a title"){
@@ -123,5 +158,11 @@ todoForm.addEventListener('submit', () => {
         };
     }
 });
+
+function clearContent(){
+    while(content.lastChild){
+        content.removeChild(content.lastChild);
+    };
+};
 
 export { createTodo, createProject };
