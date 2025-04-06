@@ -57,19 +57,10 @@ const closeModal = document.querySelectorAll('.close');
 const inputsTodo = document.querySelectorAll('.form-todo > input');
 const inputsProject = document.querySelectorAll('.form-project > input');
 const inputs = document.querySelectorAll('form > input');
-const selectProject = document.querySelector('#project-select');
 
 const mainProject = document.querySelector('.main-page-li');
 mainProject.addEventListener('click', () => {
     clearContent();
-    for (let i = 0; i < localStorage.length; i++){
-        if (Array.isArray(JSON.parse(localStorage.getItem(localStorage.key(i))))){
-            continue;
-        }
-        let item = JSON.parse((localStorage.getItem(localStorage.key(i))));
-        item.title = item._title;
-        content.appendChild(createTodo(item));
-    };
 });
 
 function createProject(object){
@@ -88,19 +79,8 @@ function createProject(object){
     return li;
 };
 
-function updateProjectList(){
-    let projectBin = JSON.parse(localStorage.getItem("projectBin"));
-    for (let i = 0; i < projectBin.length; i++) {
-        let option = document.createElement('option');
-        option.setAttribute('value', projectBin[i]._title);
-        option.textContent = projectBin[i]._title;
-        projectSelect.appendChild(option);
-    }
-}
-
 addTodoBtn.addEventListener('click', () => {
     dialogCreateTodo.showModal();
-    updateProjectList();
 });
 
 addProjectBtn.addEventListener('click', () => {
@@ -118,29 +98,17 @@ closeModal.forEach((button) => {
 
 const projectForm = document.querySelector('.form-project');
 projectForm.addEventListener('submit', () => {
-    try {
         let array = [];
         inputsProject.forEach((node)=>{
             array.push(node.value);
             node.value = '';
         });
         let project = new Project(array[0]);
-        projectList.appendChild(createProject(project));
-        let projects = JSON.parse(localStorage.getItem("projectBin"));
-        projects.push(project);
-        localStorage.setItem("projectBin", JSON.stringify(projects));
-    } catch {
-        if(Error.message == "Please enter a title"){
-            alert('Please enter a title'); // todo: remove this
-        } else {
-            alert('Something went wrong');
-        };
-    }
+        localStorage.setItem(project.title, JSON.stringify(project));
 });
 
 const todoForm = document.querySelector('.form-todo');
 todoForm.addEventListener('submit', () => {
-    try {
         let array = [];
         inputsTodo.forEach((node)=>{
             array.push(node.value);
@@ -148,15 +116,7 @@ todoForm.addEventListener('submit', () => {
         });
         let todo = new Todo(array[0],array[1],array[2],array[3]);
         content.appendChild(createTodo(todo));
-        localStorage.setItem("projectBin", JSON.stringify(projects));
         localStorage.setItem(todo.title, JSON.stringify(todo));
-    } catch {
-        if(Error.message == "Please enter a title"){
-            alert('Please enter a title'); // todo: remove this
-        } else {
-            alert('Something went wrong');
-        };
-    }
 });
 
 function clearContent(){
