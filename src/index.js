@@ -1,6 +1,8 @@
 import "./styles.css";
 import { createTodo, createProject } from "./domLogic";
 
+localStorage.removeItem("project");
+
 const content = document.querySelector("#content");
 const projectDiv = document.querySelector(".project");
 const projectList = document.querySelector(".project-list");
@@ -33,7 +35,8 @@ class Project {
 
 for (let i = 0; i < localStorage.length; i++) {
   let item = JSON.parse(localStorage.getItem(localStorage.key(i)));
-  if (item.type == "project") {
+  if (item.type == "project" || localStorage.key(i) == "project") {
+    projectList.appendChild(createProject(item));
     continue;
   }
   content.appendChild(createTodo(item));

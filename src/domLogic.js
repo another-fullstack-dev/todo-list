@@ -68,6 +68,14 @@ const inputs = document.querySelectorAll("form > input");
 const mainProject = document.querySelector(".main-page-li");
 mainProject.addEventListener("click", () => {
   clearContent();
+  for (let i = 0; i < localStorage.length; i++) {
+    let item = JSON.parse(localStorage.getItem(localStorage.key(i)));
+    if (item.type == "project" || localStorage.key(i) == "project") {
+      continue;
+    }
+    localStorage.removeItem("project");
+    content.appendChild(createTodo(item));
+  }
 });
 
 function createProject(object) {
@@ -124,6 +132,11 @@ todoForm.addEventListener("submit", () => {
   let todo = new Todo(array[0], array[1], array[2], array[3]);
   content.appendChild(createTodo(todo));
   localStorage.setItem(todo.title, JSON.stringify(todo));
+  if(localStorage.getItem("project")){
+    let project = JSON.parse(localStorage.getItem(localStorage.getItem("project"))); // its 12 pm im not even going to question it
+    project.todos.push(todo);
+    localStorage.setItem(project.title, JSON.stringify(project));
+  }
 });
 
 function clearContent() {
