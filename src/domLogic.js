@@ -29,11 +29,21 @@ function createTodo(object) {
     object.completed = true;
     div.style.opacity = 0.5;
     localStorage.setItem(object.title, JSON.stringify(object));
+    if(localStorage.getItem("project")){
+      let project = JSON.parse(localStorage.getItem(localStorage.getItem("project")));
+      project.todos[object.index].completed = true;
+      localStorage.setItem(project.title, JSON.stringify(project));
+    }
   });
 
   removeBtn.addEventListener("click", () => {
     content.removeChild(div);
     localStorage.removeItem(object.title);
+    if(localStorage.getItem("project")){
+      let project = JSON.parse(localStorage.getItem(localStorage.getItem("project")));
+      project.todos.splice(project.todos[object.index], 1);
+      localStorage.setItem(project.title, JSON.stringify(project));
+    }
   });
 
   div.appendChild(h2);
@@ -68,14 +78,19 @@ const inputs = document.querySelectorAll("form > input");
 const mainProject = document.querySelector(".main-page-li");
 mainProject.addEventListener("click", () => {
   clearContent();
+  localStorage.removeItem("project");
   for (let i = 0; i < localStorage.length; i++) {
-    let item = JSON.parse(localStorage.getItem(localStorage.key(i)));
-    if (item.type == "project" || localStorage.key(i) == "project") {
+    try {
+      let item = JSON.parse(localStorage.getItem(localStorage.key(i)));
+      if (item.type == "project" || localStorage.key(i) == "project") {
+        continue;
+      };
+      content.appendChild(createTodo(item))
+    } catch(Error) { // not needed?
+      console.error(Error);
       continue;
-    }
-    localStorage.removeItem("project");
-    content.appendChild(createTodo(item));
-  }
+    };
+  };
 });
 
 function createProject(object) {
@@ -86,7 +101,7 @@ function createProject(object) {
   li.addEventListener("click", () => {
     clearContent();
     localStorage.setItem("project", p.textContent);
-    object.todos.forEach((todo) => {
+    JSON.parse(localStorage.getItem(localStorage.getItem("project"))).todos.forEach((todo) => {
       content.appendChild(createTodo(todo));
     });
   });
@@ -119,6 +134,7 @@ projectForm.addEventListener("submit", () => {
     node.value = "";
   });
   let project = new Project(array[0]);
+  projectList.appendChild(createProject(project));
   localStorage.setItem(project.title, JSON.stringify(project));
 });
 
@@ -131,12 +147,13 @@ todoForm.addEventListener("submit", () => {
   });
   let todo = new Todo(array[0], array[1], array[2], array[3]);
   content.appendChild(createTodo(todo));
-  localStorage.setItem(todo.title, JSON.stringify(todo));
   if(localStorage.getItem("project")){
     let project = JSON.parse(localStorage.getItem(localStorage.getItem("project"))); // its 12 pm im not even going to question it
     project.todos.push(todo);
+    todo.index = project.todos.indexOf(todo);
     localStorage.setItem(project.title, JSON.stringify(project));
   }
+  localStorage.setItem(todo.title, JSON.stringify(todo));
 });
 
 function clearContent() {
