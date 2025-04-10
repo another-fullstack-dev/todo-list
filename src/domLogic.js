@@ -3,6 +3,7 @@ import {
   projectDiv,
   projectList,
   projectSelect,
+  currentProject,
   Todo,
   Project,
 } from "./index";
@@ -29,8 +30,10 @@ function createTodo(object) {
     object.completed = true;
     div.style.opacity = 0.5;
     localStorage.setItem(object.title, JSON.stringify(object));
-    if(localStorage.getItem("project")){
-      let project = JSON.parse(localStorage.getItem(localStorage.getItem("project")));
+    if (localStorage.getItem("project")) {
+      let project = JSON.parse(
+        localStorage.getItem(localStorage.getItem("project"))
+      );
       project.todos[object.index].completed = true;
       localStorage.setItem(project.title, JSON.stringify(project));
     }
@@ -39,8 +42,10 @@ function createTodo(object) {
   removeBtn.addEventListener("click", () => {
     content.removeChild(div);
     localStorage.removeItem(object.title);
-    if(localStorage.getItem("project")){
-      let project = JSON.parse(localStorage.getItem(localStorage.getItem("project")));
+    if (localStorage.getItem("project")) {
+      let project = JSON.parse(
+        localStorage.getItem(localStorage.getItem("project"))
+      );
       project.todos.splice(project.todos[object.index], 1);
       localStorage.setItem(project.title, JSON.stringify(project));
     }
@@ -78,33 +83,72 @@ const inputs = document.querySelectorAll("form > input");
 const mainProject = document.querySelector(".main-page-li");
 mainProject.addEventListener("click", () => {
   clearContent();
+  currentProject.textContent = "Main page";
   localStorage.removeItem("project");
   for (let i = 0; i < localStorage.length; i++) {
     try {
       let item = JSON.parse(localStorage.getItem(localStorage.key(i)));
       if (item.type == "project" || localStorage.key(i) == "project") {
         continue;
-      };
-      content.appendChild(createTodo(item))
-    } catch(Error) { // not needed?
+      }
+      content.appendChild(createTodo(item));
+    } catch (Error) {
+      // not needed?
       console.error(Error);
       continue;
-    };
-  };
+    }
+  }
 });
 
 function createProject(object) {
   let p = document.createElement("p");
   let li = document.createElement("li");
+  let btn = document.createElement("button");
+  btn.textContent = "X";
+  btn.setAttribute("hidden", "");
+  btn.addEventListener("click", (Event) => {
+    Event.stopPropagation();
+    clearContent();
+    projectList.removeChild(li);
+    localStorage.removeItem(object.title);
+    localStorage.removeItem("project");
+    currentProject.textContent = "Main page";
+    for (let i = 0; i < localStorage.length; i++) {
+      try {
+        let item = JSON.parse(localStorage.getItem(localStorage.key(i)));
+        if (item.type == "project" || localStorage.key(i) == "project") {
+          continue;
+        }
+        content.appendChild(createTodo(item));
+      } catch (Error) {
+        // not needed?
+        console.error(Error);
+        continue;
+      }
+    }
+    /* mainProject.dispatchEvent(); */ // how the hell its done? new Event is not working. because of this i need to repeat code above.
+  });
   li.appendChild(p);
+  li.appendChild(btn);
   p.textContent = object.title;
   li.addEventListener("click", () => {
     clearContent();
     localStorage.setItem("project", p.textContent);
-    JSON.parse(localStorage.getItem(localStorage.getItem("project"))).todos.forEach((todo) => {
+    JSON.parse(
+      localStorage.getItem(localStorage.getItem("project"))
+    ).todos.forEach((todo) => {
       content.appendChild(createTodo(todo));
     });
+    currentProject.textContent = p.textContent;
   });
+
+  li.addEventListener("mouseover", () => {
+    li.lastChild.removeAttribute("hidden")
+  })
+
+  li.addEventListener('mouseleave', () => {
+    li.lastChild.setAttribute("hidden", "");
+  })
 
   return li;
 }
@@ -147,8 +191,10 @@ todoForm.addEventListener("submit", () => {
   });
   let todo = new Todo(array[0], array[1], array[2], array[3]);
   content.appendChild(createTodo(todo));
-  if(localStorage.getItem("project")){
-    let project = JSON.parse(localStorage.getItem(localStorage.getItem("project"))); // its 12 pm im not even going to question it
+  if (localStorage.getItem("project")) {
+    let project = JSON.parse(
+      localStorage.getItem(localStorage.getItem("project"))
+    ); // its 12 pm im not even going to question it
     project.todos.push(todo);
     todo.index = project.todos.indexOf(todo);
     localStorage.setItem(project.title, JSON.stringify(project));

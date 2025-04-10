@@ -7,6 +7,7 @@ const content = document.querySelector("#content");
 const projectDiv = document.querySelector(".project");
 const projectList = document.querySelector(".project-list");
 const projectSelect = document.querySelector("#project-select");
+const currentProject = document.querySelector(".current-project");
 
 class Todo {
   constructor(
@@ -33,13 +34,15 @@ class Project {
   }
 }
 
+currentProject.textContent = "Main page";
 for (let i = 0; i < localStorage.length; i++) {
   let item = JSON.parse(localStorage.getItem(localStorage.key(i)));
   if (item.type == "project" || localStorage.key(i) == "project") {
     projectList.appendChild(createProject(item));
+    currentProject.textContent = item.title;
     continue;
   }
   content.appendChild(createTodo(item));
 }
 
-export { content, projectDiv, projectList, projectSelect, Todo, Project };
+export { content, projectDiv, projectList, projectSelect, currentProject, Todo, Project };

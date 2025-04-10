@@ -108,3 +108,13 @@ dialog {
 .project-list > li > p:hover{
     text-decoration: underline;
 }
+
+.project-list > li > button {
+    width: 20px;
+    height: 20px;
+}
+
+.project-list > li > p {
+    display: inline;
+    margin-right: 10px;
+}
