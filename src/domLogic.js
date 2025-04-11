@@ -29,7 +29,7 @@ function createTodo(object) {
     }
     object.completed = true;
     div.style.opacity = 0.5;
-    localStorage.setItem(object.title, JSON.stringify(object));
+    localStorage.setItem(object.id, JSON.stringify(object));
     if (localStorage.getItem("project")) {
       let project = JSON.parse(
         localStorage.getItem(localStorage.getItem("project"))
@@ -41,7 +41,7 @@ function createTodo(object) {
 
   removeBtn.addEventListener("click", () => {
     content.removeChild(div);
-    localStorage.removeItem(object.title);
+    localStorage.removeItem(object.id);
     if (localStorage.getItem("project")) {
       let project = JSON.parse(
         localStorage.getItem(localStorage.getItem("project"))
@@ -184,6 +184,13 @@ todoForm.addEventListener("submit", () => {
   });
   let todo = new Todo(array[0], array[1], array[2], array[3]);
   todo.priorityColor = prioColor.value;
+
+  // to avoid duplicate entries
+  let id = Math.random().toString();
+  id = id.split(".");
+  id = id[1];
+  todo.id = id;
+
   prioColor.value = '';
   content.appendChild(createTodo(todo));
   if (localStorage.getItem("project")) {
@@ -194,7 +201,7 @@ todoForm.addEventListener("submit", () => {
     todo.index = project.todos.indexOf(todo);
     localStorage.setItem(project.title, JSON.stringify(project));
   }
-  localStorage.setItem(todo.title, JSON.stringify(todo));
+  localStorage.setItem(todo.id, JSON.stringify(todo));
 });
 
 function clearContent() {

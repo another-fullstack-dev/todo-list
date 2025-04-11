@@ -37,9 +37,10 @@ class Project {
 currentProject.textContent = "Main page";
 for (let i = 0; i < localStorage.length; i++) {
   let item = JSON.parse(localStorage.getItem(localStorage.key(i)));
-  if (item.type == "project" || localStorage.key(i) == "project") {
+  if (item.type == "project") {
     projectList.appendChild(createProject(item));
-    currentProject.textContent = item.title;
+    continue;
+  } else if (localStorage.key(i) == "project"){
     continue;
   }
   content.appendChild(createTodo(item));
