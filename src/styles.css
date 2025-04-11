@@ -99,7 +99,8 @@ dialog {
     gap: 8px;
 }
 
-.input > form > input {
+.input > form > input,
+#priority {
     max-width: 300px;
     height: 100px;
     overflow-wrap: anywhere;

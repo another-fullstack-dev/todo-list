@@ -61,6 +61,9 @@ function createTodo(object) {
   prioSpan.textContent = object.priority;
   completedBtn.textContent = "Mark as completed";
   removeBtn.textContent = "X";
+  if(object.priorityColor != "#000000"){
+    prioSpan.style.backgroundColor = object.priorityColor;
+  }
 
   if (object.completed) {
     div.style.opacity = 0.5;
@@ -76,9 +79,14 @@ const dialogCreateProject = document.querySelector(".dialog-project");
 const addTodoBtn = document.querySelector(".add");
 const addProjectBtn = document.querySelector(".btn-add-project");
 const closeModal = document.querySelectorAll(".close");
-const inputsTodo = document.querySelectorAll(".form-todo > input");
+let inputsTodo = document.querySelectorAll(".form-todo > input");
 const inputsProject = document.querySelectorAll(".form-project > input");
 const inputs = document.querySelectorAll("form > input");
+inputsTodo = Array.from(inputs);
+inputsTodo.pop() // for some reason after converting to array it adds duplicate title node ? ? ?
+let prioDivInputs = document.querySelector("#priority");
+inputsTodo.push(prioDivInputs);
+const prioColor = document.querySelector('#prio-color');
 
 const mainProject = document.querySelector(".main-page-li");
 mainProject.addEventListener("click", () => {
@@ -111,22 +119,7 @@ function createProject(object) {
     clearContent();
     projectList.removeChild(li);
     localStorage.removeItem(object.title);
-    localStorage.removeItem("project");
-    currentProject.textContent = "Main page";
-    for (let i = 0; i < localStorage.length; i++) {
-      try {
-        let item = JSON.parse(localStorage.getItem(localStorage.key(i)));
-        if (item.type == "project" || localStorage.key(i) == "project") {
-          continue;
-        }
-        content.appendChild(createTodo(item));
-      } catch (Error) {
-        // not needed?
-        console.error(Error);
-        continue;
-      }
-    }
-    /* mainProject.dispatchEvent(); */ // how the hell its done? new Event is not working. because of this i need to repeat code above.
+    mainProject.dispatchEvent(new MouseEvent("click")); 
   });
   li.appendChild(p);
   li.appendChild(btn);
@@ -190,6 +183,8 @@ todoForm.addEventListener("submit", () => {
     node.value = "";
   });
   let todo = new Todo(array[0], array[1], array[2], array[3]);
+  todo.priorityColor = prioColor.value;
+  prioColor.value = '';
   content.appendChild(createTodo(todo));
   if (localStorage.getItem("project")) {
     let project = JSON.parse(
