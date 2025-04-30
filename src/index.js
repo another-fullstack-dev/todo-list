@@ -1,6 +1,8 @@
 import "./styles.css";
 import { createTodo, createProject } from "./domLogic";
 
+const CURRENT_TIME = new Date(); // im not sure if i even need this or if its good practice but whatever
+
 localStorage.removeItem("project");
 
 const content = document.querySelector("#content");
@@ -46,4 +48,4 @@ for (let i = 0; i < localStorage.length; i++) {
   content.appendChild(createTodo(item));
 }
 
-export { content, projectDiv, projectList, projectSelect, currentProject, Todo, Project };
+export { content, projectDiv, projectList, projectSelect, currentProject, CURRENT_TIME, Todo, Project };

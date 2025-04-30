@@ -6,7 +6,10 @@ import {
   currentProject,
   Todo,
   Project,
+  CURRENT_TIME,
 } from "./index";
+
+import { formatRelative, subDays } from "date-fns";
 
 function createTodo(object) {
   let div = document.createElement("div");
@@ -87,6 +90,7 @@ inputsTodo.pop() // for some reason after converting to array it adds duplicate 
 let prioDivInputs = document.querySelector("#priority");
 inputsTodo.push(prioDivInputs);
 const prioColor = document.querySelector('#prio-color');
+let dateInput = document.querySelector("#due-date");
 
 const mainProject = document.querySelector(".main-page-li");
 mainProject.addEventListener("click", () => {
@@ -178,20 +182,35 @@ projectForm.addEventListener("submit", () => {
 const todoForm = document.querySelector(".form-todo");
 todoForm.addEventListener("submit", () => {
   let array = [];
+  
+  let date = dateInput.value.split("-");
+  let time = date[2].split("T");
+  date.pop();
+  date.push(time.shift());
+  time = time[0].split(":");
+  date[1] = date[1] - 1;
+  console.log(date, time);
+  let finalDate = formatRelative(new Date(date[0], date[1], date[2], time[0], time[1]), CURRENT_TIME);
+  console.log(CURRENT_TIME);
+  console.log(finalDate);
+  
   inputsTodo.forEach((node) => {
     array.push(node.value);
     node.value = "";
   });
+  
+  array[2] = finalDate;
+
   let todo = new Todo(array[0], array[1], array[2], array[3]);
   todo.priorityColor = prioColor.value;
+  prioColor.value = '';
 
   // to avoid duplicate entries
   let id = Math.random().toString();
   id = id.split(".");
   id = id[1];
   todo.id = id;
-
-  prioColor.value = '';
+  
   content.appendChild(createTodo(todo));
   if (localStorage.getItem("project")) {
     let project = JSON.parse(
