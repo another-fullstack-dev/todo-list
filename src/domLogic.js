@@ -137,8 +137,8 @@ function createProject(object) {
     localStorage.setItem("project", p.textContent);
     JSON.parse(
       localStorage.getItem(localStorage.getItem("project"))
-    ).todos.forEach((todo) => {
-      content.appendChild(createTodo(todo));
+    ).todos.forEach((id) => {
+      content.appendChild(createTodo(JSON.parse(localStorage.getItem(id))));
     });
     currentProject.textContent = p.textContent;
   });
@@ -212,8 +212,8 @@ todoForm.addEventListener("submit", () => {
     let project = JSON.parse(
       localStorage.getItem(localStorage.getItem("project"))
     ); // its 12 pm im not even going to question it
-    project.todos.push(todo);
-    todo.index = project.todos.indexOf(todo);
+    project.todos.push(todo.id);
+    todo.index = project.todos.indexOf(todo.id);
     localStorage.setItem(project.title, JSON.stringify(project));
   }
   localStorage.setItem(todo.id, JSON.stringify(todo));
