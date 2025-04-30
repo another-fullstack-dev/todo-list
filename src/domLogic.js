@@ -15,12 +15,30 @@ const dialogCreateTodo = document.querySelector(".dialog-todo");
 const dialogCreateProject = document.querySelector(".dialog-project");
 const addTodoBtn = document.querySelector(".add");
 const addProjectBtn = document.querySelector(".btn-add-project");
-const closeModal = document.querySelectorAll(".close");
+const closeModal = document.querySelectorAll(".close"); // idiot
 const prioTextInput = document.querySelector("#priority");
 const prioColorInput = document.querySelector("#prio-color");
 const dateInput = document.querySelector("#due-date");
 const inputsProject = document.querySelectorAll(".form-project > input");
 const inputs = document.querySelectorAll("form > input"); // i dont know about this
+const dialogNuke = document.querySelector(".dialog-nuke");
+
+const closeNukeBtn = document.querySelector(".nuke-close");
+closeNukeBtn.addEventListener("click", ()=>{
+  dialogNuke.close();
+})
+
+const confirmNukeBtn = document.querySelector(".nuke-confirm");
+confirmNukeBtn.addEventListener("click", () => {
+  console.info("NUKED");
+  localStorage.clear();
+  dialogNuke.close();
+})
+
+const nukeBtn = document.querySelector(".nuke");
+nukeBtn.addEventListener("click", ()=>{
+  dialogNuke.showModal();
+})
 
 let inputsTodo = document.querySelectorAll(".form-todo > input");
 inputsTodo = Array.from(inputsTodo);
@@ -149,6 +167,7 @@ addProjectBtn.addEventListener("click", () => {
   dialogCreateProject.showModal();
 });
 
+// actual idiot
 closeModal.forEach((button) => { // better way to do this?
   button.addEventListener("click", () => {
     button.parentElement.parentElement.parentElement.close(); // ok
@@ -215,6 +234,7 @@ function clearContent() {
   }
 }
 
+// dateTime === "YYYY-MM-DDTHH:mm"
 function getDate(dateTime) {
   if (dateTime == "" || dateTime === null) return;
   let date = dateTime.split("-");

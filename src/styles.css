@@ -119,3 +119,26 @@ dialog {
     display: inline;
     margin-right: 10px;
 }
+
+.dialog-nuke > div {
+    display: flex;
+    flex-direction: column;
+}
+
+.nuke-header {
+    display: flex;
+}
+
+.nuke-header > h1 {
+    display: inline;
+    align-self: center;
+}
+
+.nuke-buttons {
+    display: flex;
+}
+
+.nuke-buttons > button {
+    flex: 1;
+    height: 32px;
+}
