@@ -33,13 +33,6 @@ function createTodo(object) {
     object.completed = true;
     div.style.opacity = 0.5;
     localStorage.setItem(object.id, JSON.stringify(object));
-    if (localStorage.getItem("project")) {
-      let project = JSON.parse(
-        localStorage.getItem(localStorage.getItem("project"))
-      );
-      project.todos[object.index].completed = true;
-      localStorage.setItem(project.title, JSON.stringify(project));
-    }
   });
 
   removeBtn.addEventListener("click", () => {
