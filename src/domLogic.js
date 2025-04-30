@@ -11,6 +11,35 @@ import {
 
 import { formatRelative } from "date-fns";
 
+const dialogCreateTodo = document.querySelector(".dialog-todo");
+const dialogCreateProject = document.querySelector(".dialog-project");
+const addTodoBtn = document.querySelector(".add");
+const addProjectBtn = document.querySelector(".btn-add-project");
+const closeModal = document.querySelectorAll(".close");
+const prioTextInput = document.querySelector("#priority");
+const prioColorInput = document.querySelector("#prio-color");
+const dateInput = document.querySelector("#due-date");
+const inputsProject = document.querySelectorAll(".form-project > input");
+const inputs = document.querySelectorAll("form > input"); // i dont know about this
+
+let inputsTodo = document.querySelectorAll(".form-todo > input");
+inputsTodo = Array.from(inputsTodo);
+inputsTodo.push(prioTextInput);
+
+const mainProject = document.querySelector(".main-page-li");
+mainProject.addEventListener("click", () => {
+  clearContent();
+  currentProject.textContent = "Main page";
+  localStorage.removeItem("project");
+  for (let i = 0; i < localStorage.length; i++) {
+    let item = JSON.parse(localStorage.getItem(localStorage.key(i)));
+    if (item.type == "project" || localStorage.key(i) == "project") {
+      continue;
+    }
+    content.appendChild(createTodo(item));
+  }
+});
+
 function createTodo(object) {
   let div = document.createElement("div");
   let h2 = document.createElement("h2");
@@ -57,7 +86,7 @@ function createTodo(object) {
   prioSpan.textContent = object.priority;
   completedBtn.textContent = "Mark as completed";
   removeBtn.textContent = "X";
-  if(object.priorityColor != "#000000"){
+  if (object.priorityColor != "#000000") {
     prioSpan.style.backgroundColor = object.priorityColor;
   }
 
@@ -65,7 +94,7 @@ function createTodo(object) {
     div.style.opacity = 0.5;
   }
 
-  if (object.expired){
+  if (object.expired) {
     div.style.outline = "1px solid red";
   }
 
@@ -73,41 +102,6 @@ function createTodo(object) {
 
   return div;
 }
-
-const dialogCreateTodo = document.querySelector(".dialog-todo");
-const dialogCreateProject = document.querySelector(".dialog-project");
-const addTodoBtn = document.querySelector(".add");
-const addProjectBtn = document.querySelector(".btn-add-project");
-const closeModal = document.querySelectorAll(".close");
-let inputsTodo = document.querySelectorAll(".form-todo > input");
-const inputsProject = document.querySelectorAll(".form-project > input");
-const inputs = document.querySelectorAll("form > input");
-inputsTodo = Array.from(inputs);
-inputsTodo.pop() // for some reason after converting to array it adds duplicate title node ? ? ?
-let prioDivInputs = document.querySelector("#priority");
-inputsTodo.push(prioDivInputs);
-const prioColor = document.querySelector('#prio-color');
-let dateInput = document.querySelector("#due-date");
-
-const mainProject = document.querySelector(".main-page-li");
-mainProject.addEventListener("click", () => {
-  clearContent();
-  currentProject.textContent = "Main page";
-  localStorage.removeItem("project");
-  for (let i = 0; i < localStorage.length; i++) {
-    try {
-      let item = JSON.parse(localStorage.getItem(localStorage.key(i)));
-      if (item.type == "project" || localStorage.key(i) == "project") {
-        continue;
-      }
-      content.appendChild(createTodo(item));
-    } catch (Error) {
-      // not needed?
-      console.error(Error);
-      continue;
-    }
-  }
-});
 
 function createProject(object) {
   let p = document.createElement("p");
@@ -120,7 +114,7 @@ function createProject(object) {
     clearContent();
     projectList.removeChild(li);
     localStorage.removeItem(object.title);
-    mainProject.dispatchEvent(new MouseEvent("click")); 
+    mainProject.dispatchEvent(new MouseEvent("click"));
   });
   li.appendChild(p);
   li.appendChild(btn);
@@ -137,12 +131,12 @@ function createProject(object) {
   });
 
   li.addEventListener("mouseover", () => {
-    li.lastChild.removeAttribute("hidden")
-  })
+    li.lastChild.removeAttribute("hidden");
+  });
 
-  li.addEventListener('mouseleave', () => {
+  li.addEventListener("mouseleave", () => {
     li.lastChild.setAttribute("hidden", "");
-  })
+  });
 
   return li;
 }
@@ -155,10 +149,10 @@ addProjectBtn.addEventListener("click", () => {
   dialogCreateProject.showModal();
 });
 
-closeModal.forEach((button) => {
+closeModal.forEach((button) => { // better way to do this?
   button.addEventListener("click", () => {
     button.parentElement.parentElement.parentElement.close(); // ok
-    inputs.forEach((node) => {
+    inputs.forEach((node) => { // doesnt look like it belongs here
       node.value = "";
     });
   });
@@ -180,29 +174,29 @@ const todoForm = document.querySelector(".form-todo");
 todoForm.addEventListener("submit", () => {
   let array = [];
   let timestamp = dateInput.value;
-  if (dateInput.value == ''){
+  if (dateInput.value == "") {
     timestamp = null;
-  };
-  
+  }
+
   inputsTodo.forEach((node) => {
     array.push(node.value);
     node.value = "";
   });
-  
+
   array[2] = getDate(timestamp);
 
   let todo = new Todo(array[0], array[1], array[2], array[3]);
-  todo.priorityColor = prioColor.value;
-  prioColor.value = '';
+  todo.priorityColor = prioColorInput.value;
+  prioColorInput.value = "";
 
   todo.timestamp = timestamp;
 
-  // to avoid duplicate entries
+  // generate a unique id and use it to reference the todo
   let id = Math.random().toString();
   id = id.split(".");
   id = id[1];
   todo.id = id;
-  
+
   content.appendChild(createTodo(todo));
   if (localStorage.getItem("project")) {
     let project = JSON.parse(
@@ -221,17 +215,20 @@ function clearContent() {
   }
 }
 
-function getDate(dateValue){
-  if (dateValue == '' || dateValue === null) return;
-  let date = dateValue.split("-");
+function getDate(dateTime) {
+  if (dateTime == "" || dateTime === null) return;
+  let date = dateTime.split("-");
   let time = date[2].split("T");
   date.pop();
   date.push(time.shift());
   time = time[0].split(":");
   date[1] = date[1] - 1; // month indices begin at 0 lol okay
-  let finalDate = formatRelative(new Date(date[0], date[1], date[2], time[0], time[1]), CURRENT_TIME);
-  
+  let finalDate = formatRelative(
+    new Date(date[0], date[1], date[2], time[0], time[1]),
+    CURRENT_TIME
+  );
+
   return finalDate;
-};
+}
 
 export { createTodo, createProject, getDate };
