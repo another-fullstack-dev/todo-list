@@ -229,7 +229,7 @@ function clearContent() {
 }
 
 function getDate(dateValue){
-  if (dateValue == '') return;
+  if (dateValue == '' || dateValue === null) return;
   let date = dateValue.split("-");
   let time = date[2].split("T");
   date.pop();
