@@ -187,6 +187,9 @@ const todoForm = document.querySelector(".form-todo");
 todoForm.addEventListener("submit", () => {
   let array = [];
   let timestamp = dateInput.value;
+  if (dateInput.value == ''){
+    timestamp = null;
+  };
   
   inputsTodo.forEach((node) => {
     array.push(node.value);
@@ -226,6 +229,7 @@ function clearContent() {
 }
 
 function getDate(dateValue){
+  if (dateValue == '') return;
   let date = dateValue.split("-");
   let time = date[2].split("T");
   date.pop();

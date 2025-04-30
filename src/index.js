@@ -47,12 +47,15 @@ for (let i = 0; i < localStorage.length; i++) {
   } else if (localStorage.key(i) == "project"){
     continue;
   }
-  item.dueDate = getDate(item.timestamp);
-  if(compareAsc(item.timestamp, CURRENT_TIME) != 1){
-    item.expired = true; 
-    localStorage.setItem(item.id, JSON.stringify(item)); // doesnt update in localStorage so we re-set it. actually it also doesnt update in projects. oh well
-  }
-  // i should rewrite a lot of things. we should store id instead of copied objects in projects.
+
+  if (item.timestamp){
+    item.dueDate = getDate(item.timestamp);
+    if(compareAsc(item.timestamp, CURRENT_TIME) != 1){
+      item.expired = true; 
+      localStorage.setItem(item.id, JSON.stringify(item)); // doesnt update in localStorage so we re-set it.
+    };
+  };
+
   content.appendChild(createTodo(item));
 }
 
