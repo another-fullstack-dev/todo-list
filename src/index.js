@@ -1,5 +1,6 @@
 import "./styles.css";
-import { createTodo, createProject } from "./domLogic";
+import { createTodo, createProject, getDate } from "./domLogic";
+import { compareAsc } from "date-fns";
 
 const CURRENT_TIME = new Date(); // im not sure if i even need this or if its good practice but whatever
 
@@ -25,6 +26,7 @@ class Todo {
     this.priority = priority;
     this.completed = false;
     this.type = type;
+    this.expired = false;
   }
 }
 
@@ -45,6 +47,7 @@ for (let i = 0; i < localStorage.length; i++) {
   } else if (localStorage.key(i) == "project"){
     continue;
   }
+  item.dueDate = getDate(item.timestamp);
   content.appendChild(createTodo(item));
 }
 

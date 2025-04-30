@@ -9,7 +9,7 @@ import {
   CURRENT_TIME,
 } from "./index";
 
-import { formatRelative, subDays } from "date-fns";
+import { formatRelative } from "date-fns";
 
 function createTodo(object) {
   let div = document.createElement("div");
@@ -182,28 +182,20 @@ projectForm.addEventListener("submit", () => {
 const todoForm = document.querySelector(".form-todo");
 todoForm.addEventListener("submit", () => {
   let array = [];
-  
-  let date = dateInput.value.split("-");
-  let time = date[2].split("T");
-  date.pop();
-  date.push(time.shift());
-  time = time[0].split(":");
-  date[1] = date[1] - 1;
-  console.log(date, time);
-  let finalDate = formatRelative(new Date(date[0], date[1], date[2], time[0], time[1]), CURRENT_TIME);
-  console.log(CURRENT_TIME);
-  console.log(finalDate);
+  let timestamp = dateInput.value;
   
   inputsTodo.forEach((node) => {
     array.push(node.value);
     node.value = "";
   });
   
-  array[2] = finalDate;
+  array[2] = getDate(timestamp);
 
   let todo = new Todo(array[0], array[1], array[2], array[3]);
   todo.priorityColor = prioColor.value;
   prioColor.value = '';
+
+  todo.timestamp = timestamp;
 
   // to avoid duplicate entries
   let id = Math.random().toString();
@@ -229,4 +221,16 @@ function clearContent() {
   }
 }
 
-export { createTodo, createProject };
+function getDate(dateValue){
+  let date = dateValue.split("-");
+  let time = date[2].split("T");
+  date.pop();
+  date.push(time.shift());
+  time = time[0].split(":");
+  date[1] = date[1] - 1; // month indices begin at 0 lol okay
+  let finalDate = formatRelative(new Date(date[0], date[1], date[2], time[0], time[1]), CURRENT_TIME);
+  
+  return finalDate;
+};
+
+export { createTodo, createProject, getDate };
