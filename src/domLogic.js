@@ -72,6 +72,10 @@ function createTodo(object) {
     div.style.opacity = 0.5;
   }
 
+  if (object.expired){
+    div.style.outline = "1px solid red";
+  }
+
   div.classList.add("todo");
 
   return div;

@@ -48,6 +48,9 @@ for (let i = 0; i < localStorage.length; i++) {
     continue;
   }
   item.dueDate = getDate(item.timestamp);
+  if(compareAsc(item.timestamp, CURRENT_TIME) != 1){
+    item.expired = true;
+  }
   content.appendChild(createTodo(item));
 }
 
