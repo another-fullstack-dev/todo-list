@@ -30,9 +30,9 @@ closeNukeBtn.addEventListener("click", ()=>{
 
 const confirmNukeBtn = document.querySelector(".nuke-confirm");
 confirmNukeBtn.addEventListener("click", () => {
-  console.info("NUKED");
   localStorage.clear();
   dialogNuke.close();
+  location.reload();
 })
 
 const nukeBtn = document.querySelector(".nuke");
