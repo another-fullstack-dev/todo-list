@@ -127,11 +127,17 @@ dialog {
 
 .nuke-header {
     display: flex;
+    padding: 8px;
 }
 
-.nuke-header > h1 {
+.nuke-header > h2 {
     display: inline;
     align-self: center;
+    margin: 8px;
+}
+
+.nuke-header > img {
+    height: 82px;
 }
 
 .nuke-buttons {
