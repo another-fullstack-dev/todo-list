@@ -27,12 +27,20 @@ header {
     overflow-y: scroll;
 }
 
-#content {
+#content,
+.due-content {
     display: grid;
     grid-template-columns: repeat(auto-fit, 400px);
     gap: 8px;
     padding: 16px;
     justify-content: center;
+}
+
+.due-separator {
+    width: 90%;
+    margin-left: 5%;
+    border: 1px solid lightgray;
+    margin-bottom: 16px;
 }
 
 .sidebar {

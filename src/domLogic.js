@@ -9,7 +9,7 @@ import {
   CURRENT_TIME,
 } from "./index";
 
-import { formatRelative } from "date-fns";
+import { compareAsc, formatRelative, isSameDay, isSameMinute, isSameMonth, isSameWeek, isTomorrow } from "date-fns";
 
 const dialogCreateTodo = document.querySelector(".dialog-todo");
 const dialogCreateProject = document.querySelector(".dialog-project");
@@ -22,6 +22,12 @@ const dateInput = document.querySelector("#due-date");
 const inputsProject = document.querySelectorAll(".form-project > input");
 const inputs = document.querySelectorAll("form > input"); // i dont know about this
 const dialogNuke = document.querySelector(".dialog-nuke");
+const contentDueToday = document.querySelector(".due-today > .due-content");
+const contentDueTomorrow = document.querySelector(".due-tomorrow > .due-content");
+const contentDueWeek = document.querySelector(".due-week > .due-content");
+const contentDueMonth = document.querySelector(".due-month > .due-content");
+const contentDueLater = document.querySelector(".due-later > .due-content");
+const contentDueExpired = document.querySelector(".due-expired > .due-content");
 
 const closeNukeBtn = document.querySelector(".nuke-close");
 closeNukeBtn.addEventListener("click", ()=>{
@@ -216,7 +222,12 @@ todoForm.addEventListener("submit", () => {
   id = id[1];
   todo.id = id;
 
-  content.appendChild(createTodo(todo));
+  if (todo.timestamp){
+    sortDues(timestamp, todo);
+  } else {
+    content.appendChild(createTodo(todo));
+  }
+ 
   if (localStorage.getItem("project")) {
     let project = JSON.parse(
       localStorage.getItem(localStorage.getItem("project"))
@@ -225,6 +236,7 @@ todoForm.addEventListener("submit", () => {
     todo.index = project.todos.indexOf(todo.id);
     localStorage.setItem(project.title, JSON.stringify(project));
   }
+
   localStorage.setItem(todo.id, JSON.stringify(todo));
 });
 
@@ -251,4 +263,23 @@ function getDate(dateTime) {
   return finalDate;
 }
 
-export { createTodo, createProject, getDate };
+ // oh well
+function sortDues(timestamp, todo){
+  if (isSameDay(timestamp, CURRENT_TIME)){
+    contentDueToday.appendChild(createTodo(todo));
+  } else if (isSameWeek(timestamp, CURRENT_TIME)){
+    if (isTomorrow(timestamp)){
+      contentDueTomorrow.appendChild(createTodo(todo));
+    } else {
+      contentDueWeek.appendChild(createTodo(todo));
+    }
+  } else if (isSameMonth(timestamp, CURRENT_TIME)){
+    contentDueMonth.appendChild(createTodo(todo));
+  } else if (todo.expired){
+    contentDueExpired.appendChild(createTodo(todo));
+  } else {
+    contentDueLater.appendChild(createTodo(todo));
+  }
+}
+
+export { createTodo, createProject, getDate, sortDues };

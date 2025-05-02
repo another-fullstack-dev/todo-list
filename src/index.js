@@ -1,8 +1,10 @@
 import "./styles.css";
-import { createTodo, createProject, getDate } from "./domLogic";
-import { compareAsc } from "date-fns";
+import { createTodo, createProject, getDate, sortDues } from "./domLogic";
+import { compareAsc, getMonth, getWeek, setDefaultOptions } from "date-fns";
 
-const CURRENT_TIME = new Date(); // im not sure if i even need this or if its good practice but whatever
+setDefaultOptions({ weekStartsOn: 1 }) // set week start on monday
+
+const CURRENT_TIME = new Date();
 
 localStorage.removeItem("project");
 
@@ -54,9 +56,10 @@ for (let i = 0; i < localStorage.length; i++) {
       item.expired = true; 
       localStorage.setItem(item.id, JSON.stringify(item)); // doesnt update in localStorage so we re-set it.
     };
-  };
-
-  content.appendChild(createTodo(item));
+    sortDues(item.timestamp, item)
+  } else {
+    content.appendChild(createTodo(item));
+  }  
 }
 
 export { content, projectDiv, projectList, projectSelect, currentProject, CURRENT_TIME, Todo, Project };
