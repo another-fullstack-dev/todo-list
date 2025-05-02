@@ -28,6 +28,13 @@ const contentDueWeek = document.querySelector(".due-week > .due-content");
 const contentDueMonth = document.querySelector(".due-month > .due-content");
 const contentDueLater = document.querySelector(".due-later > .due-content");
 const contentDueExpired = document.querySelector(".due-expired > .due-content");
+const contentAll = Array.from([ 
+  contentDueToday,
+  contentDueTomorrow,
+  contentDueWeek,
+  contentDueMonth,
+  contentDueLater,
+  contentDueExpired])
 
 const closeNukeBtn = document.querySelector(".nuke-close");
 closeNukeBtn.addEventListener("click", ()=>{
@@ -52,7 +59,9 @@ inputsTodo.push(prioTextInput);
 
 const mainProject = document.querySelector(".main-page-li");
 mainProject.addEventListener("click", () => {
-  clearContent();
+  contentAll.forEach((element)=>{
+    clearContent(element);
+  })
   currentProject.textContent = "Main page";
   localStorage.removeItem("project");
   for (let i = 0; i < localStorage.length; i++) {
@@ -60,7 +69,11 @@ mainProject.addEventListener("click", () => {
     if (item.type == "project" || localStorage.key(i) == "project") {
       continue;
     }
-    content.appendChild(createTodo(item));
+    if (item.timestamp){
+      sortDues(item.timestamp, item);
+    } else {
+      content.appendChild(createTodo(item));
+    }
   }
 });
 
@@ -135,7 +148,9 @@ function createProject(object) {
   btn.setAttribute("hidden", "");
   btn.addEventListener("click", (Event) => {
     Event.stopPropagation();
-    clearContent();
+    contentAll.forEach((element)=>{
+      clearContent(element);
+    })
     projectList.removeChild(li);
     localStorage.removeItem(object.title);
     mainProject.dispatchEvent(new MouseEvent("click"));
@@ -144,12 +159,18 @@ function createProject(object) {
   li.appendChild(btn);
   p.textContent = object.title;
   li.addEventListener("click", () => {
-    clearContent();
+    contentAll.forEach((element)=>{
+      clearContent(element);
+    })
     localStorage.setItem("project", p.textContent);
     JSON.parse(
       localStorage.getItem(localStorage.getItem("project"))
     ).todos.forEach((id) => {
-      content.appendChild(createTodo(JSON.parse(localStorage.getItem(id))));
+      if (JSON.parse(localStorage.getItem(id)).timestamp){
+        sortDues(JSON.parse(localStorage.getItem(id)).timestamp, JSON.parse(localStorage.getItem(id)));
+      } else {
+        content.appendChild(createTodo(JSON.parse(localStorage.getItem(id))));
+      }
     });
     currentProject.textContent = p.textContent;
   });
@@ -240,9 +261,9 @@ todoForm.addEventListener("submit", () => {
   localStorage.setItem(todo.id, JSON.stringify(todo));
 });
 
-function clearContent() {
-  while (content.lastChild) {
-    content.removeChild(content.lastChild);
+function clearContent(element) {
+  while (element.lastChild) {
+    element.removeChild(element.lastChild);
   }
 }
 
@@ -282,4 +303,9 @@ function sortDues(timestamp, todo){
   }
 }
 
-export { createTodo, createProject, getDate, sortDues };
+function hideEmpty(element){
+  if(element.lastChild) return;
+  element.setAttribute("hidden", "")
+}
+
+export { createTodo, createProject, getDate, sortDues, contentAll};

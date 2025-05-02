@@ -1,5 +1,5 @@
 import "./styles.css";
-import { createTodo, createProject, getDate, sortDues } from "./domLogic";
+import { createTodo, createProject, getDate, sortDues, hideEmpty, contentAll } from "./domLogic";
 import { compareAsc, getMonth, getWeek, setDefaultOptions } from "date-fns";
 
 setDefaultOptions({ weekStartsOn: 1 }) // set week start on monday
@@ -13,6 +13,7 @@ const projectDiv = document.querySelector(".project");
 const projectList = document.querySelector(".project-list");
 const projectSelect = document.querySelector("#project-select");
 const currentProject = document.querySelector(".current-project");
+contentAll.push(content);
 
 class Todo {
   constructor(
