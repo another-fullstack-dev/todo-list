@@ -102,13 +102,11 @@ function createTodo(object) {
   });
 
   removeBtn.addEventListener("click", () => {
-    content.removeChild(div);
+    div.parentElement.removeChild(div);
     localStorage.removeItem(object.id);
-    if (localStorage.getItem("project")) {
-      let project = JSON.parse(
-        localStorage.getItem(localStorage.getItem("project"))
-      );
-      project.todos.splice(project.todos[object.index], 1);
+    if (object.project){
+      let project = JSON.parse(localStorage.getItem(object.project));
+      project.todos.splice(object.index, 1);
       localStorage.setItem(project.title, JSON.stringify(project));
     }
   });
@@ -255,6 +253,7 @@ todoForm.addEventListener("submit", () => {
     ); // its 12 pm im not even going to question it
     project.todos.push(todo.id);
     todo.index = project.todos.indexOf(todo.id);
+    todo.project = project.title;
     localStorage.setItem(project.title, JSON.stringify(project));
   }
 
