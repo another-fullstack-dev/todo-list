@@ -107,7 +107,7 @@ function createTodo(object) {
     if (object.project){
       let project = JSON.parse(localStorage.getItem(object.project));
       project.todos.splice(object.index, 1);
-      localStorage.setItem(project.title, JSON.stringify(project));
+      localStorage.setItem(project.id, JSON.stringify(project));
     }
   });
 
@@ -150,7 +150,7 @@ function createProject(object) {
       clearContent(element);
     })
     projectList.removeChild(li);
-    localStorage.removeItem(object.title);
+    localStorage.removeItem(object.id);
     mainProject.dispatchEvent(new MouseEvent("click"));
   });
   li.appendChild(p);
@@ -160,7 +160,7 @@ function createProject(object) {
     contentAll.forEach((element)=>{
       clearContent(element);
     })
-    localStorage.setItem("project", p.textContent);
+    localStorage.setItem("project", object.id);
     JSON.parse(
       localStorage.getItem(localStorage.getItem("project"))
     ).todos.forEach((id) => {
@@ -209,9 +209,12 @@ projectForm.addEventListener("submit", () => {
     array.push(node.value);
     node.value = "";
   });
+  
   let project = new Project(array[0]);
+  project.id = generateId();
+
   projectList.appendChild(createProject(project));
-  localStorage.setItem(project.title, JSON.stringify(project));
+  localStorage.setItem(project.id, JSON.stringify(project));
 });
 
 const todoForm = document.querySelector(".form-todo");
@@ -235,11 +238,7 @@ todoForm.addEventListener("submit", () => {
 
   todo.timestamp = timestamp;
 
-  // generate a unique id and use it to reference the todo
-  let id = Math.random().toString();
-  id = id.split(".");
-  id = id[1];
-  todo.id = id;
+  todo.id = generateId();
 
   if (todo.timestamp){
     sortDues(timestamp, todo);
@@ -253,8 +252,8 @@ todoForm.addEventListener("submit", () => {
     ); // its 12 pm im not even going to question it
     project.todos.push(todo.id);
     todo.index = project.todos.indexOf(todo.id);
-    todo.project = project.title;
-    localStorage.setItem(project.title, JSON.stringify(project));
+    todo.project = project.id;
+    localStorage.setItem(project.id, JSON.stringify(project));
   }
 
   localStorage.setItem(todo.id, JSON.stringify(todo));
@@ -305,6 +304,15 @@ function sortDues(timestamp, todo){
 function hideEmpty(element){
   if(element.lastChild) return;
   element.setAttribute("hidden", "")
+}
+
+// generate a unique id and use it to reference the object
+function generateId(){
+  let id = Math.random().toString();
+  id = id.split(".");
+  id = id[1];
+
+  return id;
 }
 
 export { createTodo, createProject, getDate, sortDues, contentAll};
