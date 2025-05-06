@@ -75,6 +75,9 @@ mainProject.addEventListener("click", () => {
       content.appendChild(createTodo(item));
     }
   }
+  contentAll.forEach((content)=>{
+    if (content.lastChild) content.parentElement.removeAttribute("hidden");
+  })
 });
 
 function createTodo(object) {
@@ -102,7 +105,9 @@ function createTodo(object) {
   });
 
   removeBtn.addEventListener("click", () => {
+    let parent = div.parentElement;
     div.parentElement.removeChild(div);
+    if (parent.lastChild === null) parent.parentElement.setAttribute("hidden", "");
     localStorage.removeItem(object.id);
     if (object.project){
       let project = JSON.parse(localStorage.getItem(object.project));
@@ -171,6 +176,16 @@ function createProject(object) {
       }
     });
     currentProject.textContent = p.textContent;
+
+    contentAll.forEach((element)=>{
+      if (element === content) return;
+      if (element.lastChild) {
+        element.parentElement.removeAttribute("hidden");
+      } else {
+        element.parentElement.setAttribute("hidden", "");
+      }
+
+    })
   });
 
   li.addEventListener("mouseover", () => {
@@ -240,11 +255,15 @@ todoForm.addEventListener("submit", () => {
 
   todo.id = generateId();
 
+  let todoElement = null;
+
   if (todo.timestamp){
-    sortDues(timestamp, todo);
+    todoElement = sortDues(timestamp, todo);
   } else {
-    content.appendChild(createTodo(todo));
+    todoElement = content.appendChild(createTodo(todo));
   }
+
+  todoElement.parentElement.parentElement.removeAttribute("hidden"); // i hate myself
  
   if (localStorage.getItem("project")) {
     let project = JSON.parse(
@@ -285,19 +304,19 @@ function getDate(dateTime) {
  // oh well
 function sortDues(timestamp, todo){
   if (todo.expired){
-    contentDueExpired.appendChild(createTodo(todo));
+    return contentDueExpired.appendChild(createTodo(todo));
   } else if (isSameDay(timestamp, CURRENT_TIME)){
-    contentDueToday.appendChild(createTodo(todo));
+    return contentDueToday.appendChild(createTodo(todo));
   } else if (isSameWeek(timestamp, CURRENT_TIME)){
     if (isTomorrow(timestamp)){
-      contentDueTomorrow.appendChild(createTodo(todo));
+      return contentDueTomorrow.appendChild(createTodo(todo));
     } else {
-      contentDueWeek.appendChild(createTodo(todo));
+      return contentDueWeek.appendChild(createTodo(todo));
     }
   } else if (isSameMonth(timestamp, CURRENT_TIME)){
-    contentDueMonth.appendChild(createTodo(todo));
+    return contentDueMonth.appendChild(createTodo(todo));
   } else {
-    contentDueLater.appendChild(createTodo(todo));
+    return contentDueLater.appendChild(createTodo(todo));
   }
 }
 

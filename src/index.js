@@ -51,16 +51,19 @@ for (let i = 0; i < localStorage.length; i++) {
     continue;
   }
 
+  let todoElement = null;
+
   if (item.timestamp){
     item.dueDate = getDate(item.timestamp);
     if(compareAsc(item.timestamp, CURRENT_TIME) != 1){
       item.expired = true; 
       localStorage.setItem(item.id, JSON.stringify(item)); // doesnt update in localStorage so we re-set it.
     };
-    sortDues(item.timestamp, item)
+    todoElement = sortDues(item.timestamp, item)
   } else {
-    content.appendChild(createTodo(item));
-  }  
+    todoElement = content.appendChild(createTodo(item));
+  } 
+  todoElement.parentElement.parentElement.removeAttribute("hidden");
 }
 
 export { content, projectDiv, projectList, projectSelect, currentProject, CURRENT_TIME, Todo, Project };
