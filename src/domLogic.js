@@ -284,7 +284,9 @@ function getDate(dateTime) {
 
  // oh well
 function sortDues(timestamp, todo){
-  if (isSameDay(timestamp, CURRENT_TIME)){
+  if (todo.expired){
+    contentDueExpired.appendChild(createTodo(todo));
+  } else if (isSameDay(timestamp, CURRENT_TIME)){
     contentDueToday.appendChild(createTodo(todo));
   } else if (isSameWeek(timestamp, CURRENT_TIME)){
     if (isTomorrow(timestamp)){
@@ -294,16 +296,9 @@ function sortDues(timestamp, todo){
     }
   } else if (isSameMonth(timestamp, CURRENT_TIME)){
     contentDueMonth.appendChild(createTodo(todo));
-  } else if (todo.expired){
-    contentDueExpired.appendChild(createTodo(todo));
   } else {
     contentDueLater.appendChild(createTodo(todo));
   }
-}
-
-function hideEmpty(element){
-  if(element.lastChild) return;
-  element.setAttribute("hidden", "")
 }
 
 // generate a unique id and use it to reference the object
