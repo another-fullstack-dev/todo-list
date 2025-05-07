@@ -22,6 +22,7 @@ const dateInput = document.querySelector("#due-date");
 const inputsProject = document.querySelectorAll(".form-project > input");
 const inputs = document.querySelectorAll("form > input"); // i dont know about this
 const dialogNuke = document.querySelector(".dialog-nuke");
+const checkboxInput = document.querySelector("#checklist");
 const contentDueToday = document.querySelector(".due-today > .due-content");
 const contentDueTomorrow = document.querySelector(".due-tomorrow > .due-content");
 const contentDueWeek = document.querySelector(".due-week > .due-content");
@@ -250,6 +251,7 @@ closeModal.forEach((button) => { // better way to do this?
     inputs.forEach((node) => { // doesnt look like it belongs here
       node.value = "";
     });
+    checkboxInput.checked = false;
   });
 });
 
@@ -288,6 +290,11 @@ todoForm.addEventListener("submit", () => {
   prioColorInput.value = "";
 
   todo.timestamp = timestamp;
+  if (timestamp === null && todo.type == "todo") todo.type = "note"; // useless as of now (and probably will remain)
+  if (checkboxInput.checked) {
+    todo.type = "checklist";
+    checkboxInput.checked = false;
+  };
 
   todo.id = generateId();
 
