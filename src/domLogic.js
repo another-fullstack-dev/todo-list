@@ -57,6 +57,34 @@ let inputsTodo = document.querySelectorAll(".form-todo > input");
 inputsTodo = Array.from(inputsTodo);
 inputsTodo.push(prioTextInput);
 
+const removeCompletedBtn = document.querySelector(".btn-remove-completed");
+removeCompletedBtn.addEventListener("click", () => {
+  let deleted = [];
+  let projects = [];
+
+  for (let i = 0; i < localStorage.length; i++) {
+    let item = JSON.parse(localStorage.getItem(localStorage.key(i)));
+
+    if (localStorage.key(i) == "project") continue;
+
+    if (item.completed) deleted.push(item.id);
+
+    if (item.type == "project") projects.push(item);
+  };
+
+  deleted.forEach((todo)=>{
+    projects.forEach((project)=>{
+      if(project.todos.includes(todo)){
+        project.todos.splice(project.todos.indexOf(todo), 1);
+        localStorage.setItem(project.id, JSON.stringify(project));
+      };
+    })
+    localStorage.removeItem(todo);
+  });
+  
+  location.reload();
+});
+
 const mainProject = document.querySelector(".main-page-li");
 mainProject.addEventListener("click", () => {
   contentAll.forEach((element)=>{
