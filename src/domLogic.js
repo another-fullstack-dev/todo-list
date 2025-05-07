@@ -135,7 +135,15 @@ function createTodo(object) {
   removeBtn.addEventListener("click", () => {
     let parent = div.parentElement;
     div.parentElement.removeChild(div);
-    if (parent.lastChild === null) parent.parentElement.setAttribute("hidden", "");
+
+    if (parent.lastChild === null) {
+      if (parent.parentElement === projectDiv) {
+        parent.setAttribute("hidden", "");
+      } else {
+        parent.parentElement.setAttribute("hidden", "");
+      };
+    };
+    
     localStorage.removeItem(object.id);
     if (object.project){
       let project = JSON.parse(localStorage.getItem(object.project));
