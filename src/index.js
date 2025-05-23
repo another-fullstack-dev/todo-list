@@ -1,5 +1,5 @@
 import "./styles.css";
-import { createTodo, createProject, getDate, sortDues, hideEmpty, contentAll, populateChecks } from "./domLogic";
+import { createTodo, createProject, getDate, sortDues, hideEmpty, contentAll, populateChecks, totalPageLayout } from "./domLogic";
 import { compareAsc, getMonth, getWeek, setDefaultOptions } from "date-fns";
 
 setDefaultOptions({ weekStartsOn: 1 }) // set week start on monday
@@ -42,32 +42,6 @@ class Project {
 }
 
 currentProject.textContent = "Main page";
-for (let i = 0; i < localStorage.length; i++) {
-  let item = JSON.parse(localStorage.getItem(localStorage.key(i)));
-  if (item.type == "project") {
-    projectList.appendChild(createProject(item));
-    continue;
-  } else if (localStorage.key(i) == "project"){
-    continue;
-  }
-
-  let todoElement = null;
-
-  if (item.timestamp){
-    item.dueDate = getDate(item.timestamp);
-    if(compareAsc(item.timestamp, CURRENT_TIME) != 1){
-      item.expired = true; 
-      localStorage.setItem(item.id, JSON.stringify(item)); // doesnt update in localStorage so we re-set it.
-    };
-    todoElement = sortDues(item.timestamp, item)
-  } else {
-    todoElement = content.appendChild(createTodo(item));
-  } 
-  todoElement.parentElement.parentElement.removeAttribute("hidden");
-
-  if (item.type == "checklist"){
-    populateChecks(item, todoElement)
-  }
-}
+totalPageLayout();
 
 export { content, projectDiv, projectList, projectSelect, currentProject, CURRENT_TIME, Todo, Project };

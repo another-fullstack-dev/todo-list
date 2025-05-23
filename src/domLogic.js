@@ -347,6 +347,18 @@ function createTodo(object) {
       dueInput.remove();
       dueSpan.removeAttribute("hidden");
       if (!compareAsc(object.timestamp, CURRENT_TIME) != 1) object.expired = false;
+      contentAll.forEach((element)=>{
+        clearContent(element);
+      })
+      totalPageLayout();
+      contentAll.forEach((element)=>{
+        if (element === content) return;
+        if (element.lastChild) {
+          element.parentElement.removeAttribute("hidden");
+        } else {
+          element.parentElement.setAttribute("hidden", "");
+        }
+      })
       localStorage.setItem(object.id, JSON.stringify(object));
     });
 
@@ -618,4 +630,35 @@ function populateChecks(item, todoElement){
   });
 }
 
-export { createTodo, createProject, getDate, sortDues, populateChecks, contentAll};
+// im so lost in those
+function totalPageLayout(){
+  for (let i = 0; i < localStorage.length; i++) {
+    let item = JSON.parse(localStorage.getItem(localStorage.key(i)));
+    if (item.type == "project") {
+      projectList.appendChild(createProject(item));
+      continue;
+    } else if (localStorage.key(i) == "project"){
+      continue;
+    }
+  
+    let todoElement = null;
+  
+    if (item.timestamp){
+      item.dueDate = getDate(item.timestamp);
+      if(compareAsc(item.timestamp, CURRENT_TIME) != 1){
+        item.expired = true; 
+        localStorage.setItem(item.id, JSON.stringify(item));
+      };
+      todoElement = sortDues(item.timestamp, item)
+    } else {
+      todoElement = content.appendChild(createTodo(item));
+    } 
+    todoElement.parentElement.parentElement.removeAttribute("hidden");
+  
+    if (item.type == "checklist"){
+      populateChecks(item, todoElement)
+    }
+  }
+}
+
+export { createTodo, createProject, getDate, sortDues, populateChecks, totalPageLayout, contentAll};
