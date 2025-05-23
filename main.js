@@ -31,10 +31,378 @@ __webpack_require__.d(__webpack_exports__, {
   Fu: () => (/* binding */ Todo),
   Qs: () => (/* binding */ content),
   f6: () => (/* binding */ currentProject),
+  tS: () => (/* binding */ projectDiv),
   K$: () => (/* binding */ projectList)
 });
 
-// UNUSED EXPORTS: projectDiv, projectSelect
+// UNUSED EXPORTS: projectSelect
+
+;// ./node_modules/date-fns/constants.js
+/**
+ * @module constants
+ * @summary Useful constants
+ * @description
+ * Collection of useful date constants.
+ *
+ * The constants could be imported from `date-fns/constants`:
+ *
+ * ```ts
+ * import { maxTime, minTime } from "./constants/date-fns/constants";
+ *
+ * function isAllowedTime(time) {
+ *   return time <= maxTime && time >= minTime;
+ * }
+ * ```
+ */
+
+/**
+ * @constant
+ * @name daysInWeek
+ * @summary Days in 1 week.
+ */
+const daysInWeek = 7;
+
+/**
+ * @constant
+ * @name daysInYear
+ * @summary Days in 1 year.
+ *
+ * @description
+ * How many days in a year.
+ *
+ * One years equals 365.2425 days according to the formula:
+ *
+ * > Leap year occurs every 4 years, except for years that are divisible by 100 and not divisible by 400.
+ * > 1 mean year = (365+1/4-1/100+1/400) days = 365.2425 days
+ */
+const daysInYear = 365.2425;
+
+/**
+ * @constant
+ * @name maxTime
+ * @summary Maximum allowed time.
+ *
+ * @example
+ * import { maxTime } from "./constants/date-fns/constants";
+ *
+ * const isValid = 8640000000000001 <= maxTime;
+ * //=> false
+ *
+ * new Date(8640000000000001);
+ * //=> Invalid Date
+ */
+const maxTime = Math.pow(10, 8) * 24 * 60 * 60 * 1000;
+
+/**
+ * @constant
+ * @name minTime
+ * @summary Minimum allowed time.
+ *
+ * @example
+ * import { minTime } from "./constants/date-fns/constants";
+ *
+ * const isValid = -8640000000000001 >= minTime;
+ * //=> false
+ *
+ * new Date(-8640000000000001)
+ * //=> Invalid Date
+ */
+const minTime = -maxTime;
+
+/**
+ * @constant
+ * @name millisecondsInWeek
+ * @summary Milliseconds in 1 week.
+ */
+const millisecondsInWeek = 604800000;
+
+/**
+ * @constant
+ * @name millisecondsInDay
+ * @summary Milliseconds in 1 day.
+ */
+const millisecondsInDay = 86400000;
+
+/**
+ * @constant
+ * @name millisecondsInMinute
+ * @summary Milliseconds in 1 minute
+ */
+const millisecondsInMinute = 60000;
+
+/**
+ * @constant
+ * @name millisecondsInHour
+ * @summary Milliseconds in 1 hour
+ */
+const millisecondsInHour = 3600000;
+
+/**
+ * @constant
+ * @name millisecondsInSecond
+ * @summary Milliseconds in 1 second
+ */
+const millisecondsInSecond = 1000;
+
+/**
+ * @constant
+ * @name minutesInYear
+ * @summary Minutes in 1 year.
+ */
+const minutesInYear = 525600;
+
+/**
+ * @constant
+ * @name minutesInMonth
+ * @summary Minutes in 1 month.
+ */
+const minutesInMonth = 43200;
+
+/**
+ * @constant
+ * @name minutesInDay
+ * @summary Minutes in 1 day.
+ */
+const minutesInDay = 1440;
+
+/**
+ * @constant
+ * @name minutesInHour
+ * @summary Minutes in 1 hour.
+ */
+const minutesInHour = 60;
+
+/**
+ * @constant
+ * @name monthsInQuarter
+ * @summary Months in 1 quarter.
+ */
+const monthsInQuarter = 3;
+
+/**
+ * @constant
+ * @name monthsInYear
+ * @summary Months in 1 year.
+ */
+const monthsInYear = 12;
+
+/**
+ * @constant
+ * @name quartersInYear
+ * @summary Quarters in 1 year
+ */
+const quartersInYear = 4;
+
+/**
+ * @constant
+ * @name secondsInHour
+ * @summary Seconds in 1 hour.
+ */
+const secondsInHour = 3600;
+
+/**
+ * @constant
+ * @name secondsInMinute
+ * @summary Seconds in 1 minute.
+ */
+const secondsInMinute = 60;
+
+/**
+ * @constant
+ * @name secondsInDay
+ * @summary Seconds in 1 day.
+ */
+const secondsInDay = secondsInHour * 24;
+
+/**
+ * @constant
+ * @name secondsInWeek
+ * @summary Seconds in 1 week.
+ */
+const secondsInWeek = secondsInDay * 7;
+
+/**
+ * @constant
+ * @name secondsInYear
+ * @summary Seconds in 1 year.
+ */
+const secondsInYear = secondsInDay * daysInYear;
+
+/**
+ * @constant
+ * @name secondsInMonth
+ * @summary Seconds in 1 month
+ */
+const secondsInMonth = secondsInYear / 12;
+
+/**
+ * @constant
+ * @name secondsInQuarter
+ * @summary Seconds in 1 quarter.
+ */
+const secondsInQuarter = secondsInMonth * 3;
+
+/**
+ * @constant
+ * @name constructFromSymbol
+ * @summary Symbol enabling Date extensions to inherit properties from the reference date.
+ *
+ * The symbol is used to enable the `constructFrom` function to construct a date
+ * using a reference date and a value. It allows to transfer extra properties
+ * from the reference date to the new date. It's useful for extensions like
+ * [`TZDate`](https://github.com/date-fns/tz) that accept a time zone as
+ * a constructor argument.
+ */
+const constructFromSymbol = Symbol.for("constructDateFrom");
+
+;// ./node_modules/date-fns/constructFrom.js
+
+
+/**
+ * @name constructFrom
+ * @category Generic Helpers
+ * @summary Constructs a date using the reference date and the value
+ *
+ * @description
+ * The function constructs a new date using the constructor from the reference
+ * date and the given value. It helps to build generic functions that accept
+ * date extensions.
+ *
+ * It defaults to `Date` if the passed reference date is a number or a string.
+ *
+ * Starting from v3.7.0, it allows to construct a date using `[Symbol.for("constructDateFrom")]`
+ * enabling to transfer extra properties from the reference date to the new date.
+ * It's useful for extensions like [`TZDate`](https://github.com/date-fns/tz)
+ * that accept a time zone as a constructor argument.
+ *
+ * @typeParam DateType - The `Date` type, the function operates on. Gets inferred from passed arguments. Allows to use extensions like [`UTCDate`](https://github.com/date-fns/utc).
+ *
+ * @param date - The reference date to take constructor from
+ * @param value - The value to create the date
+ *
+ * @returns Date initialized using the given date and value
+ *
+ * @example
+ * import { constructFrom } from "./constructFrom/date-fns";
+ *
+ * // A function that clones a date preserving the original type
+ * function cloneDate<DateType extends Date>(date: DateType): DateType {
+ *   return constructFrom(
+ *     date, // Use constructor from the given date
+ *     date.getTime() // Use the date value to create a new date
+ *   );
+ * }
+ */
+function constructFrom(date, value) {
+  if (typeof date === "function") return date(value);
+
+  if (date && typeof date === "object" && constructFromSymbol in date)
+    return date[constructFromSymbol](value);
+
+  if (date instanceof Date) return new date.constructor(value);
+
+  return new Date(value);
+}
+
+// Fallback for modularized imports:
+/* harmony default export */ const date_fns_constructFrom = ((/* unused pure expression or super */ null && (constructFrom)));
+
+;// ./node_modules/date-fns/toDate.js
+
+
+/**
+ * @name toDate
+ * @category Common Helpers
+ * @summary Convert the given argument to an instance of Date.
+ *
+ * @description
+ * Convert the given argument to an instance of Date.
+ *
+ * If the argument is an instance of Date, the function returns its clone.
+ *
+ * If the argument is a number, it is treated as a timestamp.
+ *
+ * If the argument is none of the above, the function returns Invalid Date.
+ *
+ * Starting from v3.7.0, it clones a date using `[Symbol.for("constructDateFrom")]`
+ * enabling to transfer extra properties from the reference date to the new date.
+ * It's useful for extensions like [`TZDate`](https://github.com/date-fns/tz)
+ * that accept a time zone as a constructor argument.
+ *
+ * **Note**: *all* Date arguments passed to any *date-fns* function is processed by `toDate`.
+ *
+ * @typeParam DateType - The `Date` type, the function operates on. Gets inferred from passed arguments. Allows to use extensions like [`UTCDate`](https://github.com/date-fns/utc).
+ * @typeParam ResultDate - The result `Date` type, it is the type returned from the context function if it is passed, or inferred from the arguments.
+ *
+ * @param argument - The value to convert
+ *
+ * @returns The parsed date in the local time zone
+ *
+ * @example
+ * // Clone the date:
+ * const result = toDate(new Date(2014, 1, 11, 11, 30, 30))
+ * //=> Tue Feb 11 2014 11:30:30
+ *
+ * @example
+ * // Convert the timestamp to date:
+ * const result = toDate(1392098430000)
+ * //=> Tue Feb 11 2014 11:30:30
+ */
+function toDate(argument, context) {
+  // [TODO] Get rid of `toDate` or `constructFrom`?
+  return constructFrom(context || argument, argument);
+}
+
+// Fallback for modularized imports:
+/* harmony default export */ const date_fns_toDate = ((/* unused pure expression or super */ null && (toDate)));
+
+;// ./node_modules/date-fns/compareAsc.js
+
+
+/**
+ * @name compareAsc
+ * @category Common Helpers
+ * @summary Compare the two dates and return -1, 0 or 1.
+ *
+ * @description
+ * Compare the two dates and return 1 if the first date is after the second,
+ * -1 if the first date is before the second or 0 if dates are equal.
+ *
+ * @param dateLeft - The first date to compare
+ * @param dateRight - The second date to compare
+ *
+ * @returns The result of the comparison
+ *
+ * @example
+ * // Compare 11 February 1987 and 10 July 1989:
+ * const result = compareAsc(new Date(1987, 1, 11), new Date(1989, 6, 10))
+ * //=> -1
+ *
+ * @example
+ * // Sort the array of dates:
+ * const result = [
+ *   new Date(1995, 6, 2),
+ *   new Date(1987, 1, 11),
+ *   new Date(1989, 6, 10)
+ * ].sort(compareAsc)
+ * //=> [
+ * //   Wed Feb 11 1987 00:00:00,
+ * //   Mon Jul 10 1989 00:00:00,
+ * //   Sun Jul 02 1995 00:00:00
+ * // ]
+ */
+function compareAsc(dateLeft, dateRight) {
+  const diff = +toDate(dateLeft) - +toDate(dateRight);
+
+  if (diff < 0) return -1;
+  else if (diff > 0) return 1;
+
+  // Return 0 if diff is 0; return NaN if diff is NaN
+  return diff;
+}
+
+// Fallback for modularized imports:
+/* harmony default export */ const date_fns_compareAsc = ((/* unused pure expression or super */ null && (compareAsc)));
 
 ;// ./node_modules/date-fns/locale/en-US/_lib/formatDistance.js
 const formatDistanceLocale = {
@@ -713,276 +1081,6 @@ function setDefaultOptions(newOptions) {
   defaultOptions = newOptions;
 }
 
-;// ./node_modules/date-fns/constants.js
-/**
- * @module constants
- * @summary Useful constants
- * @description
- * Collection of useful date constants.
- *
- * The constants could be imported from `date-fns/constants`:
- *
- * ```ts
- * import { maxTime, minTime } from "./constants/date-fns/constants";
- *
- * function isAllowedTime(time) {
- *   return time <= maxTime && time >= minTime;
- * }
- * ```
- */
-
-/**
- * @constant
- * @name daysInWeek
- * @summary Days in 1 week.
- */
-const daysInWeek = 7;
-
-/**
- * @constant
- * @name daysInYear
- * @summary Days in 1 year.
- *
- * @description
- * How many days in a year.
- *
- * One years equals 365.2425 days according to the formula:
- *
- * > Leap year occurs every 4 years, except for years that are divisible by 100 and not divisible by 400.
- * > 1 mean year = (365+1/4-1/100+1/400) days = 365.2425 days
- */
-const daysInYear = 365.2425;
-
-/**
- * @constant
- * @name maxTime
- * @summary Maximum allowed time.
- *
- * @example
- * import { maxTime } from "./constants/date-fns/constants";
- *
- * const isValid = 8640000000000001 <= maxTime;
- * //=> false
- *
- * new Date(8640000000000001);
- * //=> Invalid Date
- */
-const maxTime = Math.pow(10, 8) * 24 * 60 * 60 * 1000;
-
-/**
- * @constant
- * @name minTime
- * @summary Minimum allowed time.
- *
- * @example
- * import { minTime } from "./constants/date-fns/constants";
- *
- * const isValid = -8640000000000001 >= minTime;
- * //=> false
- *
- * new Date(-8640000000000001)
- * //=> Invalid Date
- */
-const minTime = -maxTime;
-
-/**
- * @constant
- * @name millisecondsInWeek
- * @summary Milliseconds in 1 week.
- */
-const millisecondsInWeek = 604800000;
-
-/**
- * @constant
- * @name millisecondsInDay
- * @summary Milliseconds in 1 day.
- */
-const millisecondsInDay = 86400000;
-
-/**
- * @constant
- * @name millisecondsInMinute
- * @summary Milliseconds in 1 minute
- */
-const millisecondsInMinute = 60000;
-
-/**
- * @constant
- * @name millisecondsInHour
- * @summary Milliseconds in 1 hour
- */
-const millisecondsInHour = 3600000;
-
-/**
- * @constant
- * @name millisecondsInSecond
- * @summary Milliseconds in 1 second
- */
-const millisecondsInSecond = 1000;
-
-/**
- * @constant
- * @name minutesInYear
- * @summary Minutes in 1 year.
- */
-const minutesInYear = 525600;
-
-/**
- * @constant
- * @name minutesInMonth
- * @summary Minutes in 1 month.
- */
-const minutesInMonth = 43200;
-
-/**
- * @constant
- * @name minutesInDay
- * @summary Minutes in 1 day.
- */
-const minutesInDay = 1440;
-
-/**
- * @constant
- * @name minutesInHour
- * @summary Minutes in 1 hour.
- */
-const minutesInHour = 60;
-
-/**
- * @constant
- * @name monthsInQuarter
- * @summary Months in 1 quarter.
- */
-const monthsInQuarter = 3;
-
-/**
- * @constant
- * @name monthsInYear
- * @summary Months in 1 year.
- */
-const monthsInYear = 12;
-
-/**
- * @constant
- * @name quartersInYear
- * @summary Quarters in 1 year
- */
-const quartersInYear = 4;
-
-/**
- * @constant
- * @name secondsInHour
- * @summary Seconds in 1 hour.
- */
-const secondsInHour = 3600;
-
-/**
- * @constant
- * @name secondsInMinute
- * @summary Seconds in 1 minute.
- */
-const secondsInMinute = 60;
-
-/**
- * @constant
- * @name secondsInDay
- * @summary Seconds in 1 day.
- */
-const secondsInDay = secondsInHour * 24;
-
-/**
- * @constant
- * @name secondsInWeek
- * @summary Seconds in 1 week.
- */
-const secondsInWeek = secondsInDay * 7;
-
-/**
- * @constant
- * @name secondsInYear
- * @summary Seconds in 1 year.
- */
-const secondsInYear = secondsInDay * daysInYear;
-
-/**
- * @constant
- * @name secondsInMonth
- * @summary Seconds in 1 month
- */
-const secondsInMonth = secondsInYear / 12;
-
-/**
- * @constant
- * @name secondsInQuarter
- * @summary Seconds in 1 quarter.
- */
-const secondsInQuarter = secondsInMonth * 3;
-
-/**
- * @constant
- * @name constructFromSymbol
- * @summary Symbol enabling Date extensions to inherit properties from the reference date.
- *
- * The symbol is used to enable the `constructFrom` function to construct a date
- * using a reference date and a value. It allows to transfer extra properties
- * from the reference date to the new date. It's useful for extensions like
- * [`TZDate`](https://github.com/date-fns/tz) that accept a time zone as
- * a constructor argument.
- */
-const constructFromSymbol = Symbol.for("constructDateFrom");
-
-;// ./node_modules/date-fns/constructFrom.js
-
-
-/**
- * @name constructFrom
- * @category Generic Helpers
- * @summary Constructs a date using the reference date and the value
- *
- * @description
- * The function constructs a new date using the constructor from the reference
- * date and the given value. It helps to build generic functions that accept
- * date extensions.
- *
- * It defaults to `Date` if the passed reference date is a number or a string.
- *
- * Starting from v3.7.0, it allows to construct a date using `[Symbol.for("constructDateFrom")]`
- * enabling to transfer extra properties from the reference date to the new date.
- * It's useful for extensions like [`TZDate`](https://github.com/date-fns/tz)
- * that accept a time zone as a constructor argument.
- *
- * @typeParam DateType - The `Date` type, the function operates on. Gets inferred from passed arguments. Allows to use extensions like [`UTCDate`](https://github.com/date-fns/utc).
- *
- * @param date - The reference date to take constructor from
- * @param value - The value to create the date
- *
- * @returns Date initialized using the given date and value
- *
- * @example
- * import { constructFrom } from "./constructFrom/date-fns";
- *
- * // A function that clones a date preserving the original type
- * function cloneDate<DateType extends Date>(date: DateType): DateType {
- *   return constructFrom(
- *     date, // Use constructor from the given date
- *     date.getTime() // Use the date value to create a new date
- *   );
- * }
- */
-function constructFrom(date, value) {
-  if (typeof date === "function") return date(value);
-
-  if (date && typeof date === "object" && constructFromSymbol in date)
-    return date[constructFromSymbol](value);
-
-  if (date instanceof Date) return new date.constructor(value);
-
-  return new Date(value);
-}
-
-// Fallback for modularized imports:
-/* harmony default export */ const date_fns_constructFrom = ((/* unused pure expression or super */ null && (constructFrom)));
-
 ;// ./node_modules/date-fns/_lib/normalizeDates.js
 
 
@@ -993,55 +1091,6 @@ function normalizeDates(context, ...dates) {
   );
   return dates.map(normalize);
 }
-
-;// ./node_modules/date-fns/toDate.js
-
-
-/**
- * @name toDate
- * @category Common Helpers
- * @summary Convert the given argument to an instance of Date.
- *
- * @description
- * Convert the given argument to an instance of Date.
- *
- * If the argument is an instance of Date, the function returns its clone.
- *
- * If the argument is a number, it is treated as a timestamp.
- *
- * If the argument is none of the above, the function returns Invalid Date.
- *
- * Starting from v3.7.0, it clones a date using `[Symbol.for("constructDateFrom")]`
- * enabling to transfer extra properties from the reference date to the new date.
- * It's useful for extensions like [`TZDate`](https://github.com/date-fns/tz)
- * that accept a time zone as a constructor argument.
- *
- * **Note**: *all* Date arguments passed to any *date-fns* function is processed by `toDate`.
- *
- * @typeParam DateType - The `Date` type, the function operates on. Gets inferred from passed arguments. Allows to use extensions like [`UTCDate`](https://github.com/date-fns/utc).
- * @typeParam ResultDate - The result `Date` type, it is the type returned from the context function if it is passed, or inferred from the arguments.
- *
- * @param argument - The value to convert
- *
- * @returns The parsed date in the local time zone
- *
- * @example
- * // Clone the date:
- * const result = toDate(new Date(2014, 1, 11, 11, 30, 30))
- * //=> Tue Feb 11 2014 11:30:30
- *
- * @example
- * // Convert the timestamp to date:
- * const result = toDate(1392098430000)
- * //=> Tue Feb 11 2014 11:30:30
- */
-function toDate(argument, context) {
-  // [TODO] Get rid of `toDate` or `constructFrom`?
-  return constructFrom(context || argument, argument);
-}
-
-// Fallback for modularized imports:
-/* harmony default export */ const date_fns_toDate = ((/* unused pure expression or super */ null && (toDate)));
 
 ;// ./node_modules/date-fns/_lib/getTimezoneOffsetInMilliseconds.js
 
@@ -3270,15 +3319,398 @@ function formatRelative_formatRelative(date, baseDate, options) {
 // Fallback for modularized imports:
 /* harmony default export */ const date_fns_formatRelative = ((/* unused pure expression or super */ null && (formatRelative_formatRelative)));
 
+;// ./node_modules/date-fns/isSameDay.js
+
+
+
+/**
+ * The {@link isSameDay} function options.
+ */
+
+/**
+ * @name isSameDay
+ * @category Day Helpers
+ * @summary Are the given dates in the same day (and year and month)?
+ *
+ * @description
+ * Are the given dates in the same day (and year and month)?
+ *
+ * @param laterDate - The first date to check
+ * @param earlierDate - The second date to check
+ * @param options - An object with options
+ *
+ * @returns The dates are in the same day (and year and month)
+ *
+ * @example
+ * // Are 4 September 06:00:00 and 4 September 18:00:00 in the same day?
+ * const result = isSameDay(new Date(2014, 8, 4, 6, 0), new Date(2014, 8, 4, 18, 0))
+ * //=> true
+ *
+ * @example
+ * // Are 4 September and 4 October in the same day?
+ * const result = isSameDay(new Date(2014, 8, 4), new Date(2014, 9, 4))
+ * //=> false
+ *
+ * @example
+ * // Are 4 September, 2014 and 4 September, 2015 in the same day?
+ * const result = isSameDay(new Date(2014, 8, 4), new Date(2015, 8, 4))
+ * //=> false
+ */
+function isSameDay(laterDate, earlierDate, options) {
+  const [dateLeft_, dateRight_] = normalizeDates(
+    options?.in,
+    laterDate,
+    earlierDate,
+  );
+  return +startOfDay(dateLeft_) === +startOfDay(dateRight_);
+}
+
+// Fallback for modularized imports:
+/* harmony default export */ const date_fns_isSameDay = ((/* unused pure expression or super */ null && (isSameDay)));
+
+;// ./node_modules/date-fns/isSameWeek.js
+
+
+
+/**
+ * The {@link isSameWeek} function options.
+ */
+
+/**
+ * @name isSameWeek
+ * @category Week Helpers
+ * @summary Are the given dates in the same week (and month and year)?
+ *
+ * @description
+ * Are the given dates in the same week (and month and year)?
+ *
+ * @param laterDate - The first date to check
+ * @param earlierDate - The second date to check
+ * @param options - An object with options
+ *
+ * @returns The dates are in the same week (and month and year)
+ *
+ * @example
+ * // Are 31 August 2014 and 4 September 2014 in the same week?
+ * const result = isSameWeek(new Date(2014, 7, 31), new Date(2014, 8, 4))
+ * //=> true
+ *
+ * @example
+ * // If week starts with Monday,
+ * // are 31 August 2014 and 4 September 2014 in the same week?
+ * const result = isSameWeek(new Date(2014, 7, 31), new Date(2014, 8, 4), {
+ *   weekStartsOn: 1
+ * })
+ * //=> false
+ *
+ * @example
+ * // Are 1 January 2014 and 1 January 2015 in the same week?
+ * const result = isSameWeek(new Date(2014, 0, 1), new Date(2015, 0, 1))
+ * //=> false
+ */
+function isSameWeek(laterDate, earlierDate, options) {
+  const [laterDate_, earlierDate_] = normalizeDates(
+    options?.in,
+    laterDate,
+    earlierDate,
+  );
+  return (
+    +startOfWeek(laterDate_, options) === +startOfWeek(earlierDate_, options)
+  );
+}
+
+// Fallback for modularized imports:
+/* harmony default export */ const date_fns_isSameWeek = ((/* unused pure expression or super */ null && (isSameWeek)));
+
+;// ./node_modules/date-fns/addDays.js
+
+
+
+/**
+ * The {@link addDays} function options.
+ */
+
+/**
+ * @name addDays
+ * @category Day Helpers
+ * @summary Add the specified number of days to the given date.
+ *
+ * @description
+ * Add the specified number of days to the given date.
+ *
+ * @typeParam DateType - The `Date` type, the function operates on. Gets inferred from passed arguments. Allows to use extensions like [`UTCDate`](https://github.com/date-fns/utc).
+ * @typeParam ResultDate - The result `Date` type, it is the type returned from the context function if it is passed, or inferred from the arguments.
+ *
+ * @param date - The date to be changed
+ * @param amount - The amount of days to be added.
+ * @param options - An object with options
+ *
+ * @returns The new date with the days added
+ *
+ * @example
+ * // Add 10 days to 1 September 2014:
+ * const result = addDays(new Date(2014, 8, 1), 10)
+ * //=> Thu Sep 11 2014 00:00:00
+ */
+function addDays(date, amount, options) {
+  const _date = toDate(date, options?.in);
+  if (isNaN(amount)) return constructFrom(options?.in || date, NaN);
+
+  // If 0 days, no-op to avoid changing times in the hour before end of DST
+  if (!amount) return _date;
+
+  _date.setDate(_date.getDate() + amount);
+  return _date;
+}
+
+// Fallback for modularized imports:
+/* harmony default export */ const date_fns_addDays = ((/* unused pure expression or super */ null && (addDays)));
+
+;// ./node_modules/date-fns/constructNow.js
+
+
+/**
+ * @name constructNow
+ * @category Generic Helpers
+ * @summary Constructs a new current date using the passed value constructor.
+ * @pure false
+ *
+ * @description
+ * The function constructs a new current date using the constructor from
+ * the reference date. It helps to build generic functions that accept date
+ * extensions and use the current date.
+ *
+ * It defaults to `Date` if the passed reference date is a number or a string.
+ *
+ * @param date - The reference date to take constructor from
+ *
+ * @returns Current date initialized using the given date constructor
+ *
+ * @example
+ * import { constructNow, isSameDay } from 'date-fns'
+ *
+ * function isToday<DateType extends Date>(
+ *   date: DateArg<DateType>,
+ * ): boolean {
+ *   // If we were to use `new Date()` directly, the function would  behave
+ *   // differently in different timezones and return false for the same date.
+ *   return isSameDay(date, constructNow(date));
+ * }
+ */
+function constructNow(date) {
+  return constructFrom(date, Date.now());
+}
+
+// Fallback for modularized imports:
+/* harmony default export */ const date_fns_constructNow = ((/* unused pure expression or super */ null && (constructNow)));
+
+;// ./node_modules/date-fns/isTomorrow.js
+
+
+
+
+/**
+ * The {@link isTomorrow} function options.
+ */
+
+/**
+ * @name isTomorrow
+ * @category Day Helpers
+ * @summary Is the given date tomorrow?
+ * @pure false
+ *
+ * @description
+ * Is the given date tomorrow?
+ *
+ * @param date - The date to check
+ * @param options - An object with options
+ *
+ * @returns The date is tomorrow
+ *
+ * @example
+ * // If today is 6 October 2014, is 7 October 14:00:00 tomorrow?
+ * const result = isTomorrow(new Date(2014, 9, 7, 14, 0))
+ * //=> true
+ */
+function isTomorrow(date, options) {
+  return isSameDay(
+    date,
+    addDays(constructNow(options?.in || date), 1),
+    options,
+  );
+}
+
+// Fallback for modularized imports:
+/* harmony default export */ const date_fns_isTomorrow = ((/* unused pure expression or super */ null && (isTomorrow)));
+
+;// ./node_modules/date-fns/isSameMonth.js
+
+
+/**
+ * The {@link isSameMonth} function options.
+ */
+
+/**
+ * @name isSameMonth
+ * @category Month Helpers
+ * @summary Are the given dates in the same month (and year)?
+ *
+ * @description
+ * Are the given dates in the same month (and year)?
+ *
+ * @param laterDate - The first date to check
+ * @param earlierDate - The second date to check
+ * @param options - An object with options
+ *
+ * @returns The dates are in the same month (and year)
+ *
+ * @example
+ * // Are 2 September 2014 and 25 September 2014 in the same month?
+ * const result = isSameMonth(new Date(2014, 8, 2), new Date(2014, 8, 25))
+ * //=> true
+ *
+ * @example
+ * // Are 2 September 2014 and 25 September 2015 in the same month?
+ * const result = isSameMonth(new Date(2014, 8, 2), new Date(2015, 8, 25))
+ * //=> false
+ */
+function isSameMonth(laterDate, earlierDate, options) {
+  const [laterDate_, earlierDate_] = normalizeDates(
+    options?.in,
+    laterDate,
+    earlierDate,
+  );
+  return (
+    laterDate_.getFullYear() === earlierDate_.getFullYear() &&
+    laterDate_.getMonth() === earlierDate_.getMonth()
+  );
+}
+
+// Fallback for modularized imports:
+/* harmony default export */ const date_fns_isSameMonth = ((/* unused pure expression or super */ null && (isSameMonth)));
+
 ;// ./src/domLogic.js
 
 
 
 
+const dialogCreateTodo = document.querySelector(".dialog-todo");
+const dialogCreateProject = document.querySelector(".dialog-project");
+const addTodoBtn = document.querySelector(".add");
+const addProjectBtn = document.querySelector(".btn-add-project");
+const closeModal = document.querySelectorAll(".close"); // idiot
+const prioTextInput = document.querySelector("#priority");
+const prioColorInput = document.querySelector("#prio-color");
+const dateInput = document.querySelector("#due-date");
+const inputsProject = document.querySelectorAll(".form-project > input");
+const inputs = document.querySelectorAll("form > input"); // i dont know about this
+const dialogNuke = document.querySelector(".dialog-nuke");
+const dialogTodoDescription = document.querySelector("#description");
+const dialogTodoDescLabel = document.querySelector(".desc-label");
+const contentDueToday = document.querySelector(".due-today > .due-content");
+const contentDueTomorrow = document.querySelector(".due-tomorrow > .due-content");
+const contentDueWeek = document.querySelector(".due-week > .due-content");
+const contentDueMonth = document.querySelector(".due-month > .due-content");
+const contentDueLater = document.querySelector(".due-later > .due-content");
+const contentDueExpired = document.querySelector(".due-expired > .due-content");
+const contentAll = Array.from([ 
+  contentDueToday,
+  contentDueTomorrow,
+  contentDueWeek,
+  contentDueMonth,
+  contentDueLater,
+  contentDueExpired])
+
+const closeNukeBtn = document.querySelector(".nuke-close");
+closeNukeBtn.addEventListener("click", ()=>{
+  dialogNuke.close();
+})
+
+const confirmNukeBtn = document.querySelector(".nuke-confirm");
+confirmNukeBtn.addEventListener("click", () => {
+  localStorage.clear();
+  dialogNuke.close();
+  location.reload();
+})
+
+const nukeBtn = document.querySelector(".nuke");
+nukeBtn.addEventListener("click", ()=>{
+  dialogNuke.showModal();
+})
+
+const checkboxInput = document.querySelector("#checklist");
+checkboxInput.addEventListener("click", ()=>{
+  if (checkboxInput.checked){
+    dialogTodoDescription.setAttribute("hidden", "");
+    dialogTodoDescLabel.setAttribute("hidden", "");
+  } else {
+    dialogTodoDescription.removeAttribute("hidden");
+    dialogTodoDescLabel.removeAttribute("hidden");
+  };
+});
+
+let inputsTodo = document.querySelectorAll(".form-todo > input");
+inputsTodo = Array.from(inputsTodo);
+inputsTodo.push(prioTextInput);
+
+const removeCompletedBtn = document.querySelector(".btn-remove-completed");
+removeCompletedBtn.addEventListener("click", () => {
+  let deleted = [];
+  let projects = [];
+
+  for (let i = 0; i < localStorage.length; i++) {
+    let item = JSON.parse(localStorage.getItem(localStorage.key(i)));
+
+    if (localStorage.key(i) == "project") continue;
+
+    if (item.completed) deleted.push(item.id);
+
+    if (item.type == "project") projects.push(item);
+  };
+
+  deleted.forEach((todo)=>{
+    projects.forEach((project)=>{
+      if(project.todos.includes(todo)){
+        project.todos.splice(project.todos.indexOf(todo), 1);
+        localStorage.setItem(project.id, JSON.stringify(project));
+      };
+    })
+    localStorage.removeItem(todo);
+  });
+  
+  location.reload();
+});
+
+const mainProject = document.querySelector(".main-page-li");
+mainProject.addEventListener("click", () => {
+  contentAll.forEach((element)=>{
+    clearContent(element);
+  })
+  currentProject.textContent = "Main page";
+  localStorage.removeItem("project");
+  for (let i = 0; i < localStorage.length; i++) {
+    let item = JSON.parse(localStorage.getItem(localStorage.key(i)));
+    if (item.type == "project" || localStorage.key(i) == "project") {
+      continue;
+    }
+    let todoElement = null;
+    if (item.timestamp){
+      todoElement = sortDues(item.timestamp, item);
+    } else {
+      todoElement = content.appendChild(createTodo(item));
+    }
+    if (item.type == "checklist"){
+      populateChecks(item, todoElement);
+    }
+  }
+  contentAll.forEach((content)=>{
+    if (content.lastChild) content.parentElement.removeAttribute("hidden");
+  })
+});
+
 function createTodo(object) {
   let div = document.createElement("div");
   let h2 = document.createElement("h2");
-  let p = document.createElement("p");
   let footer = document.createElement("footer");
   let dueSpan = document.createElement("span");
   let prioSpan = document.createElement("span");
@@ -3300,28 +3732,275 @@ function createTodo(object) {
   });
 
   removeBtn.addEventListener("click", () => {
-    content.removeChild(div);
+    let parent = div.parentElement;
+    div.parentElement.removeChild(div);
+
+    if (parent.lastChild === null) {
+      if (parent.parentElement === projectDiv) {
+        parent.setAttribute("hidden", "");
+      } else {
+        parent.parentElement.setAttribute("hidden", "");
+      };
+    };
+    
     localStorage.removeItem(object.id);
-    if (localStorage.getItem("project")) {
-      let project = JSON.parse(
-        localStorage.getItem(localStorage.getItem("project"))
-      );
-      project.todos.splice(project.todos[object.index], 1);
-      localStorage.setItem(project.title, JSON.stringify(project));
+    if (object.project){
+      let project = JSON.parse(localStorage.getItem(object.project));
+      project.todos.splice(object.index, 1);
+      localStorage.setItem(project.id, JSON.stringify(project));
     }
   });
 
   div.appendChild(h2);
-  div.appendChild(p);
   div.appendChild(footer);
 
+  if (object.type == "checklist"){
+    let container = document.createElement("div");
+    let addCheck = document.createElement("button");
+    addCheck.textContent = "+";
+    addCheck.addEventListener("click", ()=>{
+      let div = document.createElement("div");
+      let checkbox = document.createElement("input");
+      let label = document.createElement("label");
+      let textInput = document.createElement("input");
+      let editBtn = document.createElement("button");
+      editBtn.textContent = "Edit";
+      editBtn.setAttribute("disabled", "");
+      editBtn.setAttribute("hidden", "");
+      textInput.setAttribute("type", "text");
+      textInput.style.width = "200px";
+      textInput.addEventListener("blur", ()=>{
+        label.textContent = textInput.value.trim();
+        if (label.textContent == ""){
+          checkbox.remove();
+          div.remove();
+          label.remove();
+          editBtn.removeAttribute("disabled");
+          return;
+        };
+        textInput.remove();
+        object.checks.forEach(array => {
+          if (!array.includes(checkbox.id)) return;
+          array[0] = label.textContent;
+        })
+        editBtn.removeAttribute("disabled");
+        localStorage.setItem(object.id, JSON.stringify(object));
+      });
+      textInput.addEventListener("keydown", (Event) => {
+        if (Event.key === "Enter"){
+          label.textContent = textInput.value.trim();
+          if (label.textContent == "") return;
+          textInput.remove();
+          object.checks.forEach(array => {
+            if (!array.includes(checkbox.id)) return;
+            array[0] = label.textContent;
+          })
+          editBtn.removeAttribute("disabled");
+          localStorage.setItem(object.id, JSON.stringify(object));
+        }
+      })
+      checkbox.setAttribute("type", "checkbox");
+      checkbox.id = generateId();
+      label.setAttribute("for", checkbox.id);
+      div.appendChild(checkbox);
+      div.appendChild(textInput);
+      div.appendChild(label);
+      div.classList.add("checkbox-container");
+      container.appendChild(div);
+      object.checks.push([label.textContent, checkbox.id, checkbox.checked]);
+
+      checkbox.addEventListener("click", ()=>{ 
+        object.checks.forEach(array => {
+          if (!array.includes(checkbox.id)) return;
+          array[2] = checkbox.checked;
+        })
+        localStorage.setItem(object.id, JSON.stringify(object));
+      });
+
+      div.addEventListener("mouseover", ()=>{
+        editBtn.removeAttribute("hidden");
+      });
+
+      div.addEventListener("mouseleave", ()=>{
+        editBtn.setAttribute("hidden", "");
+      });
+
+      editBtn.addEventListener("click", ()=>{
+        label.setAttribute("hidden", "");
+        editBtn.setAttribute("disabled", "");
+
+        let labelInput = document.createElement("input");
+        labelInput.setAttribute("type", "text");
+        labelInput.value = label.textContent;
+
+        labelInput.addEventListener("blur", () => {
+          if (labelInput.value.trim() == "") {
+            label.removeAttribute("hidden");
+            editBtn.removeAttribute("disabled");
+            labelInput.remove();
+            return;
+          };
+
+          object.checks.forEach(array => {
+            if (!array.includes(checkbox.id)) return;
+            array[0] = labelInput.value;
+          })
+
+          labelInput.remove();
+          label.textContent = labelInput.value.trim();
+          editBtn.removeAttribute("disabled");
+          label.removeAttribute("hidden");
+
+          localStorage.setItem(object.id, JSON.stringify(object));
+        });
+        div.insertBefore(labelInput, label);
+      });
+      div.appendChild(editBtn);
+
+      localStorage.setItem(object.id, JSON.stringify(object));
+    });
+    container.appendChild(addCheck);
+    div.insertBefore(container, footer);
+  } else {
+    let p = document.createElement("p");
+    p.textContent = object.description;
+    div.insertBefore(p, footer);
+
+    // adding ability to edit fields
+    p.addEventListener("click", ()=>{
+      p.setAttribute("hidden", "");
+
+      let pInput = document.createElement("textarea");
+
+      pInput.style.minHeight = "300px"
+      pInput.style.maxHeight = "322px"
+      pInput.style.marginTop = "8px"
+
+      pInput.value = object.description;
+
+      pInput.addEventListener("blur", () => {
+        if (pInput.value.trim() == "") {
+          p.removeAttribute("hidden");
+          pInput.remove();
+          return;
+        };
+        object.description = pInput.value.trim();
+        pInput.remove();
+        p.textContent = object.description;
+        p.removeAttribute("hidden");
+        localStorage.setItem(object.id, JSON.stringify(object));
+      })
+
+      div.insertBefore(pInput, p);  
+    })
+  }
+
+  h2.addEventListener("click", ()=>{
+    h2.setAttribute("hidden", "");
+
+    let h2Input = document.createElement("input");
+
+    h2Input.setAttribute("type", "text");
+
+    h2Input.style.height = "28px"
+
+    h2Input.value = object.title;
+
+    h2Input.addEventListener("blur", () => {
+      if (h2Input.value.trim() == "") {
+        h2.removeAttribute("hidden");
+        h2Input.remove();
+        return;
+      }
+      object.title = h2Input.value.trim();
+      h2Input.remove();
+      h2.textContent = object.title;
+      h2.removeAttribute("hidden");
+      localStorage.setItem(object.id, JSON.stringify(object));
+    })
+
+    div.insertBefore(h2Input, h2);
+  })
+
+  prioSpan.addEventListener("click", ()=>{
+    prioSpan.setAttribute("hidden", "");
+
+    let prioInput = document.createElement("input");
+    let prioColor = document.createElement("input");
+
+    prioInput.setAttribute("type", "text");
+    prioColor.setAttribute("type", "color");
+    prioColor.style.height = "20px"
+
+    prioInput.value = object.priority;
+    prioColor.value = object.priorityColor;
+
+    prioInput.addEventListener("blur", () => { // todo: if we click on color input while prioInput is focused, blur is triggered (unwanted effect)
+      if (prioInput.value.trim() == "") {
+        prioSpan.removeAttribute("hidden");
+        prioInput.remove();
+        prioColor.remove();
+        return;
+      }
+      object.priority = prioInput.value.trim();
+      object.priorityColor = prioColor.value;
+      prioInput.remove();
+      prioColor.remove();
+      prioSpan.textContent = object.priority;
+      if (object.priorityColor != "#000000") {
+        prioSpan.style.backgroundColor = object.priorityColor;
+      }
+      prioSpan.removeAttribute("hidden");
+      localStorage.setItem(object.id, JSON.stringify(object));
+    })
+
+    footer.insertBefore(prioInput, prioSpan);
+    footer.insertBefore(prioColor, prioSpan);
+  });
+
+  dueSpan.addEventListener("click", ()=>{
+    dueSpan.setAttribute("hidden", "");
+
+    let dueInput = document.createElement("input");
+    dueInput.setAttribute("type", "datetime-local");
+    dueInput.value = object.timestamp;
+
+    dueInput.addEventListener("blur", () => {
+      if (dueInput.value == "") {
+        dueSpan.removeAttribute("hidden");
+        dueInput.remove();
+        return;
+      };
+      object.timestamp = dueInput.value;
+      object.dueDate = getDate(object.timestamp);
+      dueSpan.textContent = object.dueDate;
+      dueInput.remove();
+      dueSpan.removeAttribute("hidden");
+      if (!compareAsc(object.timestamp, CURRENT_TIME) != 1) object.expired = false;
+      contentAll.forEach((element)=>{
+        clearContent(element);
+      })
+      totalPageLayout();
+      contentAll.forEach((element)=>{
+        if (element === content) return;
+        if (element.lastChild) {
+          element.parentElement.removeAttribute("hidden");
+        } else {
+          element.parentElement.setAttribute("hidden", "");
+        }
+      })
+      localStorage.setItem(object.id, JSON.stringify(object));
+    });
+
+    footer.insertBefore(dueInput, dueSpan);
+  });
+
   h2.textContent = object.title;
-  p.textContent = object.description;
   dueSpan.textContent = object.dueDate;
   prioSpan.textContent = object.priority;
   completedBtn.textContent = "Mark as completed";
   removeBtn.textContent = "X";
-  if(object.priorityColor != "#000000"){
+  if (object.priorityColor != "#000000") {
     prioSpan.style.backgroundColor = object.priorityColor;
   }
 
@@ -3329,7 +4008,7 @@ function createTodo(object) {
     div.style.opacity = 0.5;
   }
 
-  if (object.expired){
+  if (object.expired) {
     div.style.outline = "1px solid red";
   }
 
@@ -3338,93 +4017,89 @@ function createTodo(object) {
   return div;
 }
 
-const dialogCreateTodo = document.querySelector(".dialog-todo");
-const dialogCreateProject = document.querySelector(".dialog-project");
-const addTodoBtn = document.querySelector(".add");
-const addProjectBtn = document.querySelector(".btn-add-project");
-const closeModal = document.querySelectorAll(".close");
-let inputsTodo = document.querySelectorAll(".form-todo > input");
-const inputsProject = document.querySelectorAll(".form-project > input");
-const inputs = document.querySelectorAll("form > input");
-inputsTodo = Array.from(inputs);
-inputsTodo.pop() // for some reason after converting to array it adds duplicate title node ? ? ?
-let prioDivInputs = document.querySelector("#priority");
-inputsTodo.push(prioDivInputs);
-const prioColor = document.querySelector('#prio-color');
-let dateInput = document.querySelector("#due-date");
-
-const mainProject = document.querySelector(".main-page-li");
-mainProject.addEventListener("click", () => {
-  clearContent();
-  currentProject.textContent = "Main page";
-  localStorage.removeItem("project");
-  for (let i = 0; i < localStorage.length; i++) {
-    try {
-      let item = JSON.parse(localStorage.getItem(localStorage.key(i)));
-      if (item.type == "project" || localStorage.key(i) == "project") {
-        continue;
-      }
-      content.appendChild(createTodo(item));
-    } catch (Error) {
-      // not needed?
-      console.error(Error);
-      continue;
-    }
-  }
-});
-
 function createProject(object) {
   let p = document.createElement("p");
   let li = document.createElement("li");
   let btn = document.createElement("button");
   btn.textContent = "X";
   btn.setAttribute("hidden", "");
-  btn.addEventListener("click", (Event) => {
+  btn.addEventListener("click", (Event) => { // todo: since when does it not deletes all of the todos in the project?
     Event.stopPropagation();
-    clearContent();
+    contentAll.forEach((element)=>{
+      clearContent(element);
+    })
     projectList.removeChild(li);
-    localStorage.removeItem(object.title);
-    mainProject.dispatchEvent(new MouseEvent("click")); 
+    object.todos.forEach((todo)=>{
+      localStorage.removeItem(todo);
+    })
+    localStorage.removeItem(object.id);
+    mainProject.dispatchEvent(new MouseEvent("click"));
   });
   li.appendChild(p);
   li.appendChild(btn);
   p.textContent = object.title;
   li.addEventListener("click", () => {
-    clearContent();
-    localStorage.setItem("project", p.textContent);
+    contentAll.forEach((element)=>{
+      clearContent(element);
+    })
+    localStorage.setItem("project", object.id);
+    
+    // i should probably rewrite this
     JSON.parse(
       localStorage.getItem(localStorage.getItem("project"))
     ).todos.forEach((id) => {
-      content.appendChild(createTodo(JSON.parse(localStorage.getItem(id))));
+      let todoElement = null;
+      if (JSON.parse(localStorage.getItem(id)).timestamp){
+        todoElement = sortDues(JSON.parse(localStorage.getItem(id)).timestamp, JSON.parse(localStorage.getItem(id)));
+      } else {
+        todoElement = content.appendChild(createTodo(JSON.parse(localStorage.getItem(id))));
+      }
+      if (JSON.parse(localStorage.getItem(id)).type == "checklist"){
+        populateChecks(JSON.parse(localStorage.getItem(id)), todoElement)
+      }
     });
     currentProject.textContent = p.textContent;
+
+    contentAll.forEach((element)=>{
+      if (element === content) return;
+      if (element.lastChild) {
+        element.parentElement.removeAttribute("hidden");
+      } else {
+        element.parentElement.setAttribute("hidden", "");
+      }
+
+    })
   });
 
   li.addEventListener("mouseover", () => {
-    li.lastChild.removeAttribute("hidden")
-  })
+    li.lastChild.removeAttribute("hidden");
+  });
 
-  li.addEventListener('mouseleave', () => {
+  li.addEventListener("mouseleave", () => {
     li.lastChild.setAttribute("hidden", "");
-  })
+  });
 
   return li;
 }
 
 addTodoBtn.addEventListener("click", () => {
   dialogCreateTodo.showModal();
+  dialogTodoDescription.removeAttribute("hidden");
+  dialogTodoDescLabel.removeAttribute("hidden");
 });
 
 addProjectBtn.addEventListener("click", () => {
   dialogCreateProject.showModal();
 });
 
-closeModal.forEach((button) => {
+// actual idiot
+closeModal.forEach((button) => { // better way to do this?
   button.addEventListener("click", () => {
     button.parentElement.parentElement.parentElement.close(); // ok
-    inputs.forEach((node) => {
+    inputs.forEach((node) => { // doesnt look like it belongs here
       node.value = "";
     });
+    checkboxInput.checked = false;
   });
 });
 
@@ -3435,125 +4110,317 @@ projectForm.addEventListener("submit", () => {
     array.push(node.value);
     node.value = "";
   });
+  
   let project = new Project(array[0]);
+  project.id = generateId();
+
   projectList.appendChild(createProject(project));
-  localStorage.setItem(project.title, JSON.stringify(project));
+  localStorage.setItem(project.id, JSON.stringify(project));
 });
 
 const todoForm = document.querySelector(".form-todo");
 todoForm.addEventListener("submit", () => {
   let array = [];
+  let type = "todo";
+
   let timestamp = dateInput.value;
-  if (dateInput.value == ''){
+  if (dateInput.value == "") {
     timestamp = null;
-  };
-  
+  }
+
   inputsTodo.forEach((node) => {
     array.push(node.value);
     node.value = "";
   });
-  
+
   array[2] = getDate(timestamp);
 
-  let todo = new Todo(array[0], array[1], array[2], array[3]);
-  todo.priorityColor = prioColor.value;
-  prioColor.value = '';
+  if (checkboxInput.checked) {
+    type = "checklist";
+    checkboxInput.checked = false;
+  };
+
+  let todo = new Todo(array[0], array[1], array[2], array[3], type);
+  todo.priorityColor = prioColorInput.value;
+  prioColorInput.value = "";
 
   todo.timestamp = timestamp;
 
-  // to avoid duplicate entries
-  let id = Math.random().toString();
-  id = id.split(".");
-  id = id[1];
-  todo.id = id;
-  
-  content.appendChild(createTodo(todo));
+  if (timestamp === null && todo.type == "todo") todo.type = "note"; // useless as of now (and probably will remain)
+
+  todo.id = generateId();
+
+  if (todo.type == "checklist"){
+    todo.checks = [];
+  }
+
+  let todoElement = null;
+
+  if (todo.timestamp){
+    todoElement = sortDues(timestamp, todo);
+  } else {
+    todoElement = content.appendChild(createTodo(todo));
+  }
+
+  todoElement.parentElement.parentElement.removeAttribute("hidden"); // i hate myself
+ 
   if (localStorage.getItem("project")) {
     let project = JSON.parse(
       localStorage.getItem(localStorage.getItem("project"))
     ); // its 12 pm im not even going to question it
     project.todos.push(todo.id);
     todo.index = project.todos.indexOf(todo.id);
-    localStorage.setItem(project.title, JSON.stringify(project));
+    todo.project = project.id;
+    localStorage.setItem(project.id, JSON.stringify(project));
   }
+
   localStorage.setItem(todo.id, JSON.stringify(todo));
 });
 
-function clearContent() {
-  while (content.lastChild) {
-    content.removeChild(content.lastChild);
+function clearContent(element) {
+  while (element.lastChild) {
+    element.removeChild(element.lastChild);
   }
 }
 
-function getDate(dateValue){
-  if (dateValue == '' || dateValue === null) return;
-  let date = dateValue.split("-");
+// dateTime === "YYYY-MM-DDTHH:mm"
+function getDate(dateTime) {
+  if (dateTime == "" || dateTime === null) return;
+  let date = dateTime.split("-");
   let time = date[2].split("T");
   date.pop();
   date.push(time.shift());
   time = time[0].split(":");
   date[1] = date[1] - 1; // month indices begin at 0 lol okay
-  let finalDate = formatRelative_formatRelative(new Date(date[0], date[1], date[2], time[0], time[1]), CURRENT_TIME);
-  
+  let finalDate = formatRelative_formatRelative(
+    new Date(date[0], date[1], date[2], time[0], time[1]),
+    CURRENT_TIME
+  );
+
   return finalDate;
-};
+}
+
+ // oh well
+function sortDues(timestamp, todo){
+  if (todo.expired){
+    return contentDueExpired.appendChild(createTodo(todo));
+  } else if (isSameDay(timestamp, CURRENT_TIME)){
+    return contentDueToday.appendChild(createTodo(todo));
+  } else if (isSameWeek(timestamp, CURRENT_TIME)){
+    if (isTomorrow(timestamp)){
+      return contentDueTomorrow.appendChild(createTodo(todo));
+    } else {
+      return contentDueWeek.appendChild(createTodo(todo));
+    }
+  } else if (isSameMonth(timestamp, CURRENT_TIME)){
+    return contentDueMonth.appendChild(createTodo(todo));
+  } else {
+    return contentDueLater.appendChild(createTodo(todo));
+  }
+}
+
+// generate a unique id and use it to reference the object
+function generateId(){
+  let id = Math.random().toString();
+  id = id.split(".");
+  id = id[1];
+
+  return id;
+}
+
+function populateChecks(item, todoElement){
+  item.checks.forEach(array => {
+    if (array[0] === "") {
+      item.checks.splice(item.checks.indexOf(array), 1);
+      localStorage.setItem(item.id, JSON.stringify(item));
+      return;
+    }
+
+    let div = document.createElement("div");
+    let checkbox = document.createElement("input");
+    let label = document.createElement("label");
+    let editBtn = document.createElement("button");
+    editBtn.textContent = "Edit";
+    editBtn.setAttribute("hidden", "");
+    checkbox.setAttribute("type", "checkbox");
+    label.textContent = array[0];
+    checkbox.id = array[1];
+    checkbox.checked = array[2];
+    label.setAttribute("for", checkbox.id);
+
+    checkbox.addEventListener("click", ()=>{ 
+      item.checks.forEach(array => {
+        if (!array.includes(checkbox.id)) return;
+        array[2] = checkbox.checked;
+      })
+      localStorage.setItem(item.id, JSON.stringify(item));
+    });
+
+    div.addEventListener("mouseover", ()=>{
+      editBtn.removeAttribute("hidden");
+    });
+
+    div.addEventListener("mouseleave", ()=>{
+      editBtn.setAttribute("hidden", "");
+    });
+
+    editBtn.addEventListener("click", ()=>{
+        label.setAttribute("hidden", "");
+        editBtn.setAttribute("disabled", "");
+
+        let labelInput = document.createElement("input");
+        labelInput.setAttribute("type", "text");
+        labelInput.value = label.textContent;
+
+        labelInput.addEventListener("blur", () => {
+          if (labelInput.value.trim() == "") {
+            label.removeAttribute("hidden");
+            editBtn.removeAttribute("disabled");
+            labelInput.remove();
+            return;
+          };
+
+          item.checks.forEach(array => {
+            if (!array.includes(checkbox.id)) return;
+            array[0] = labelInput.value;
+          })
+
+          labelInput.remove();
+          label.textContent = labelInput.value.trim();
+          editBtn.removeAttribute("disabled");
+          label.removeAttribute("hidden");
+
+          localStorage.setItem(item.id, JSON.stringify(item));
+        });
+        div.insertBefore(labelInput, label);
+      });
+
+    div.appendChild(checkbox);
+    div.appendChild(label);
+    div.appendChild(editBtn);
+    div.classList.add("checkbox-container");
+    todoElement.insertBefore(div, todoElement.lastChild);
+  });
+}
+
+// im so lost in those
+function totalPageLayout(){
+  for (let i = 0; i < localStorage.length; i++) {
+    let item = JSON.parse(localStorage.getItem(localStorage.key(i)));
+    if (item.type == "project") {
+      projectList.appendChild(createProject(item));
+      continue;
+    } else if (localStorage.key(i) == "project"){
+      continue;
+    }
+  
+    let todoElement = null;
+  
+    if (item.timestamp){
+      item.dueDate = getDate(item.timestamp);
+      if(compareAsc(item.timestamp, CURRENT_TIME) != 1){
+        item.expired = true; 
+        localStorage.setItem(item.id, JSON.stringify(item));
+      };
+      todoElement = sortDues(item.timestamp, item)
+    } else {
+      todoElement = content.appendChild(createTodo(item));
+    } 
+    todoElement.parentElement.parentElement.removeAttribute("hidden");
+  
+    if (item.type == "checklist"){
+      populateChecks(item, todoElement)
+    }
+  }
+}
 
 
 
-;// ./node_modules/date-fns/compareAsc.js
+;// ./node_modules/date-fns/setDefaultOptions.js
 
 
 /**
- * @name compareAsc
+ * @name setDefaultOptions
  * @category Common Helpers
- * @summary Compare the two dates and return -1, 0 or 1.
+ * @summary Set default options including locale.
+ * @pure false
  *
  * @description
- * Compare the two dates and return 1 if the first date is after the second,
- * -1 if the first date is before the second or 0 if dates are equal.
+ * Sets the defaults for
+ * `options.locale`, `options.weekStartsOn` and `options.firstWeekContainsDate`
+ * arguments for all functions.
  *
- * @param dateLeft - The first date to compare
- * @param dateRight - The second date to compare
- *
- * @returns The result of the comparison
+ * @param options - An object with options
  *
  * @example
- * // Compare 11 February 1987 and 10 July 1989:
- * const result = compareAsc(new Date(1987, 1, 11), new Date(1989, 6, 10))
- * //=> -1
+ * // Set global locale:
+ * import { es } from 'date-fns/locale'
+ * setDefaultOptions({ locale: es })
+ * const result = format(new Date(2014, 8, 2), 'PPPP')
+ * //=> 'martes, 2 de septiembre de 2014'
  *
  * @example
- * // Sort the array of dates:
- * const result = [
- *   new Date(1995, 6, 2),
- *   new Date(1987, 1, 11),
- *   new Date(1989, 6, 10)
- * ].sort(compareAsc)
- * //=> [
- * //   Wed Feb 11 1987 00:00:00,
- * //   Mon Jul 10 1989 00:00:00,
- * //   Sun Jul 02 1995 00:00:00
- * // ]
+ * // Start of the week for 2 September 2014:
+ * const result = startOfWeek(new Date(2014, 8, 2))
+ * //=> Sun Aug 31 2014 00:00:00
+ *
+ * @example
+ * // Start of the week for 2 September 2014,
+ * // when we set that week starts on Monday by default:
+ * setDefaultOptions({ weekStartsOn: 1 })
+ * const result = startOfWeek(new Date(2014, 8, 2))
+ * //=> Mon Sep 01 2014 00:00:00
+ *
+ * @example
+ * // Manually set options take priority over default options:
+ * setDefaultOptions({ weekStartsOn: 1 })
+ * const result = startOfWeek(new Date(2014, 8, 2), { weekStartsOn: 0 })
+ * //=> Sun Aug 31 2014 00:00:00
+ *
+ * @example
+ * // Remove the option by setting it to `undefined`:
+ * setDefaultOptions({ weekStartsOn: 1 })
+ * setDefaultOptions({ weekStartsOn: undefined })
+ * const result = startOfWeek(new Date(2014, 8, 2))
+ * //=> Sun Aug 31 2014 00:00:00
  */
-function compareAsc(dateLeft, dateRight) {
-  const diff = +toDate(dateLeft) - +toDate(dateRight);
+function setDefaultOptions_setDefaultOptions(options) {
+  const result = {};
+  const defaultOptions = getDefaultOptions();
 
-  if (diff < 0) return -1;
-  else if (diff > 0) return 1;
+  for (const property in defaultOptions) {
+    if (Object.prototype.hasOwnProperty.call(defaultOptions, property)) {
+      // [TODO] I challenge you to fix the type
+      result[property] = defaultOptions[property];
+    }
+  }
 
-  // Return 0 if diff is 0; return NaN if diff is NaN
-  return diff;
+  for (const property in options) {
+    if (Object.prototype.hasOwnProperty.call(options, property)) {
+      if (options[property] === undefined) {
+        // [TODO] I challenge you to fix the type
+        delete result[property];
+      } else {
+        // [TODO] I challenge you to fix the type
+        result[property] = options[property];
+      }
+    }
+  }
+
+  setDefaultOptions(result);
 }
 
 // Fallback for modularized imports:
-/* harmony default export */ const date_fns_compareAsc = ((/* unused pure expression or super */ null && (compareAsc)));
+/* harmony default export */ const date_fns_setDefaultOptions = ((/* unused pure expression or super */ null && (setDefaultOptions_setDefaultOptions)));
 
 ;// ./src/index.js
 
 
 
 
-const CURRENT_TIME = new Date(); // im not sure if i even need this or if its good practice but whatever
+setDefaultOptions_setDefaultOptions({ weekStartsOn: 1 }) // set week start on monday
+
+const CURRENT_TIME = new Date();
 
 localStorage.removeItem("project");
 
@@ -3562,6 +4429,7 @@ const projectDiv = document.querySelector(".project");
 const projectList = document.querySelector(".project-list");
 const projectSelect = document.querySelector("#project-select");
 const currentProject = document.querySelector(".current-project");
+contentAll.push(content);
 
 class Todo {
   constructor(
@@ -3590,25 +4458,7 @@ class Project {
 }
 
 currentProject.textContent = "Main page";
-for (let i = 0; i < localStorage.length; i++) {
-  let item = JSON.parse(localStorage.getItem(localStorage.key(i)));
-  if (item.type == "project") {
-    projectList.appendChild(createProject(item));
-    continue;
-  } else if (localStorage.key(i) == "project"){
-    continue;
-  }
-
-  if (item.timestamp){
-    item.dueDate = getDate(item.timestamp);
-    if(compareAsc(item.timestamp, CURRENT_TIME) != 1){
-      item.expired = true; 
-      localStorage.setItem(item.id, JSON.stringify(item)); // doesnt update in localStorage so we re-set it.
-    };
-  };
-
-  content.appendChild(createTodo(item));
-}
+totalPageLayout();
 
 
 
