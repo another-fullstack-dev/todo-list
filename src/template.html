@@ -72,14 +72,14 @@
         <div class="input">
             <form class="form-todo" method="dialog">
                 <label for="title">Title</label>
-                <input type="text" id="title" autocomplete="off" required>
+                <input type="text" id="title" autocomplete="off" maxlength="40" required>
                 <label for="description" class="desc-label">Description</label>
                 <input type="text" id="description" autocomplete="off">
                 <label for="due-date">Due date</label>
                 <input type="datetime-local" id="due-date" autocomplete="off">
                 <label for="priority">Priority</label>
                 <div class="prio-div">
-                    <input type="text" id="priority" autocomplete="off"> <!-- todo: add character limit -->
+                    <input type="text" id="priority" autocomplete="off" maxlength="20">
                     <input type="color" id="prio-color">
                 </div>
                 <div class="checkbox-div">

@@ -318,6 +318,7 @@ function createTodo(object) {
     let h2Input = document.createElement("input");
 
     h2Input.setAttribute("type", "text");
+    h2Input.setAttribute("maxlength", "40");
 
     h2Input.style.height = "28px"
 
@@ -346,6 +347,7 @@ function createTodo(object) {
     let prioColor = document.createElement("input");
 
     prioInput.setAttribute("type", "text");
+    prioInput.setAttribute("maxlength", "20");
     prioColor.setAttribute("type", "color");
     prioColor.style.height = "20px"
 
