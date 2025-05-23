@@ -22,7 +22,8 @@ const dateInput = document.querySelector("#due-date");
 const inputsProject = document.querySelectorAll(".form-project > input");
 const inputs = document.querySelectorAll("form > input"); // i dont know about this
 const dialogNuke = document.querySelector(".dialog-nuke");
-const checkboxInput = document.querySelector("#checklist");
+const dialogTodoDescription = document.querySelector("#description");
+const dialogTodoDescLabel = document.querySelector(".desc-label");
 const contentDueToday = document.querySelector(".due-today > .due-content");
 const contentDueTomorrow = document.querySelector(".due-tomorrow > .due-content");
 const contentDueWeek = document.querySelector(".due-week > .due-content");
@@ -53,6 +54,17 @@ const nukeBtn = document.querySelector(".nuke");
 nukeBtn.addEventListener("click", ()=>{
   dialogNuke.showModal();
 })
+
+const checkboxInput = document.querySelector("#checklist");
+checkboxInput.addEventListener("click", ()=>{
+  if (checkboxInput.checked){
+    dialogTodoDescription.setAttribute("hidden", "");
+    dialogTodoDescLabel.setAttribute("hidden", "");
+  } else {
+    dialogTodoDescription.removeAttribute("hidden");
+    dialogTodoDescLabel.removeAttribute("hidden");
+  };
+});
 
 let inputsTodo = document.querySelectorAll(".form-todo > input");
 inputsTodo = Array.from(inputsTodo);
@@ -98,10 +110,14 @@ mainProject.addEventListener("click", () => {
     if (item.type == "project" || localStorage.key(i) == "project") {
       continue;
     }
+    let todoElement = null;
     if (item.timestamp){
-      sortDues(item.timestamp, item);
+      todoElement = sortDues(item.timestamp, item);
     } else {
-      content.appendChild(createTodo(item));
+      todoElement = content.appendChild(createTodo(item));
+    }
+    if (item.type == "checklist"){
+      populateChecks(item, todoElement);
     }
   }
   contentAll.forEach((content)=>{
@@ -112,7 +128,6 @@ mainProject.addEventListener("click", () => {
 function createTodo(object) {
   let div = document.createElement("div");
   let h2 = document.createElement("h2");
-  let p = document.createElement("p");
   let footer = document.createElement("footer");
   let dueSpan = document.createElement("span");
   let prioSpan = document.createElement("span");
@@ -154,11 +169,75 @@ function createTodo(object) {
   });
 
   div.appendChild(h2);
-  div.appendChild(p);
   div.appendChild(footer);
 
+  if (object.type == "checklist"){
+    let container = document.createElement("div");
+    let addCheck = document.createElement("button");
+    addCheck.textContent = "+";
+    addCheck.addEventListener("click", ()=>{
+      let div = document.createElement("div");
+      let checkbox = document.createElement("input");
+      let label = document.createElement("label");
+      let textInput = document.createElement("input");
+      textInput.setAttribute("type", "text");
+      textInput.style.width = "200px";
+      textInput.addEventListener("blur", ()=>{
+        label.textContent = textInput.value.trim();
+        if (label.textContent == ""){
+          checkbox.remove();
+          div.remove();
+          label.remove();
+          return;
+        };
+        textInput.remove();
+        object.checks.forEach(array => {
+          if (!array.includes(checkbox.id)) return;
+          array[0] = label.textContent;
+        })
+        localStorage.setItem(object.id, JSON.stringify(object));
+      });
+      textInput.addEventListener("keydown", (Event) => {
+        if (Event.key === "Enter"){
+          label.textContent = textInput.value.trim();
+          if (label.textContent == "") return;
+          textInput.remove();
+          object.checks.forEach(array => {
+            if (!array.includes(checkbox.id)) return;
+            array[0] = label.textContent;
+          })
+          localStorage.setItem(object.id, JSON.stringify(object));
+        }
+      })
+      checkbox.setAttribute("type", "checkbox");
+      checkbox.id = generateId();
+      label.setAttribute("for", checkbox.id);
+      div.appendChild(checkbox);
+      div.appendChild(textInput);
+      div.appendChild(label);
+      div.classList.add("checkbox-container");
+      container.appendChild(div);
+      object.checks.push([label.textContent, checkbox.id, checkbox.checked]);
+
+      checkbox.addEventListener("click", ()=>{ 
+        object.checks.forEach(array => {
+          if (!array.includes(checkbox.id)) return;
+          array[2] = checkbox.checked;
+        })
+        localStorage.setItem(object.id, JSON.stringify(object));
+      });
+
+      localStorage.setItem(object.id, JSON.stringify(object));
+    });
+    container.appendChild(addCheck);
+    div.insertBefore(container, footer);
+  } else {
+    let p = document.createElement("p");
+    p.textContent = object.description;
+    div.insertBefore(p, footer);
+  }
+
   h2.textContent = object.title;
-  p.textContent = object.description;
   dueSpan.textContent = object.dueDate;
   prioSpan.textContent = object.priority;
   completedBtn.textContent = "Mark as completed";
@@ -186,7 +265,7 @@ function createProject(object) {
   let btn = document.createElement("button");
   btn.textContent = "X";
   btn.setAttribute("hidden", "");
-  btn.addEventListener("click", (Event) => {
+  btn.addEventListener("click", (Event) => { // todo: since when does it not deletes all of the todos in the project?
     Event.stopPropagation();
     contentAll.forEach((element)=>{
       clearContent(element);
@@ -203,13 +282,19 @@ function createProject(object) {
       clearContent(element);
     })
     localStorage.setItem("project", object.id);
+    
+    // i should probably rewrite this
     JSON.parse(
       localStorage.getItem(localStorage.getItem("project"))
     ).todos.forEach((id) => {
+      let todoElement = null;
       if (JSON.parse(localStorage.getItem(id)).timestamp){
-        sortDues(JSON.parse(localStorage.getItem(id)).timestamp, JSON.parse(localStorage.getItem(id)));
+        todoElement = sortDues(JSON.parse(localStorage.getItem(id)).timestamp, JSON.parse(localStorage.getItem(id)));
       } else {
-        content.appendChild(createTodo(JSON.parse(localStorage.getItem(id))));
+        todoElement = content.appendChild(createTodo(JSON.parse(localStorage.getItem(id))));
+      }
+      if (JSON.parse(localStorage.getItem(id)).type == "checklist"){
+        populateChecks(JSON.parse(localStorage.getItem(id)), todoElement)
       }
     });
     currentProject.textContent = p.textContent;
@@ -238,6 +323,8 @@ function createProject(object) {
 
 addTodoBtn.addEventListener("click", () => {
   dialogCreateTodo.showModal();
+  dialogTodoDescription.removeAttribute("hidden");
+  dialogTodoDescLabel.removeAttribute("hidden");
 });
 
 addProjectBtn.addEventListener("click", () => {
@@ -273,6 +360,8 @@ projectForm.addEventListener("submit", () => {
 const todoForm = document.querySelector(".form-todo");
 todoForm.addEventListener("submit", () => {
   let array = [];
+  let type = "todo";
+
   let timestamp = dateInput.value;
   if (dateInput.value == "") {
     timestamp = null;
@@ -285,18 +374,24 @@ todoForm.addEventListener("submit", () => {
 
   array[2] = getDate(timestamp);
 
-  let todo = new Todo(array[0], array[1], array[2], array[3]);
+  if (checkboxInput.checked) {
+    type = "checklist";
+    checkboxInput.checked = false;
+  };
+
+  let todo = new Todo(array[0], array[1], array[2], array[3], type);
   todo.priorityColor = prioColorInput.value;
   prioColorInput.value = "";
 
   todo.timestamp = timestamp;
+
   if (timestamp === null && todo.type == "todo") todo.type = "note"; // useless as of now (and probably will remain)
-  if (checkboxInput.checked) {
-    todo.type = "checklist";
-    checkboxInput.checked = false;
-  };
 
   todo.id = generateId();
+
+  if (todo.type == "checklist"){
+    todo.checks = [];
+  }
 
   let todoElement = null;
 
@@ -372,4 +467,36 @@ function generateId(){
   return id;
 }
 
-export { createTodo, createProject, getDate, sortDues, contentAll};
+function populateChecks(item, todoElement){
+  item.checks.forEach(array => {
+    if (array[0] === "") {
+      item.checks.splice(item.checks.indexOf(array), 1);
+      localStorage.setItem(item.id, JSON.stringify(item));
+      return;
+    }
+
+    let div = document.createElement("div");
+    let checkbox = document.createElement("input");
+    let label = document.createElement("label");
+    checkbox.setAttribute("type", "checkbox");
+    label.textContent = array[0];
+    checkbox.id = array[1];
+    checkbox.checked = array[2];
+    label.setAttribute("for", checkbox.id);
+
+    checkbox.addEventListener("click", ()=>{ 
+      item.checks.forEach(array => {
+        if (!array.includes(checkbox.id)) return;
+        array[2] = checkbox.checked;
+      })
+      localStorage.setItem(item.id, JSON.stringify(item));
+    });
+
+    div.appendChild(checkbox);
+    div.appendChild(label);
+    div.classList.add("checkbox-container");
+    todoElement.insertBefore(div, todoElement.lastChild);
+  });
+}
+
+export { createTodo, createProject, getDate, sortDues, populateChecks, contentAll};

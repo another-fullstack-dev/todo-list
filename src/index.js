@@ -1,5 +1,5 @@
 import "./styles.css";
-import { createTodo, createProject, getDate, sortDues, hideEmpty, contentAll } from "./domLogic";
+import { createTodo, createProject, getDate, sortDues, hideEmpty, contentAll, populateChecks } from "./domLogic";
 import { compareAsc, getMonth, getWeek, setDefaultOptions } from "date-fns";
 
 setDefaultOptions({ weekStartsOn: 1 }) // set week start on monday
@@ -64,6 +64,10 @@ for (let i = 0; i < localStorage.length; i++) {
     todoElement = content.appendChild(createTodo(item));
   } 
   todoElement.parentElement.parentElement.removeAttribute("hidden");
+
+  if (item.type == "checklist"){
+    populateChecks(item, todoElement)
+  }
 }
 
 export { content, projectDiv, projectList, projectSelect, currentProject, CURRENT_TIME, Todo, Project };
