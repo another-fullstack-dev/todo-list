@@ -180,6 +180,10 @@ function createTodo(object) {
       let checkbox = document.createElement("input");
       let label = document.createElement("label");
       let textInput = document.createElement("input");
+      let editBtn = document.createElement("button");
+      editBtn.textContent = "Edit";
+      editBtn.setAttribute("disabled", "");
+      editBtn.setAttribute("hidden", "");
       textInput.setAttribute("type", "text");
       textInput.style.width = "200px";
       textInput.addEventListener("blur", ()=>{
@@ -188,6 +192,7 @@ function createTodo(object) {
           checkbox.remove();
           div.remove();
           label.remove();
+          editBtn.removeAttribute("disabled");
           return;
         };
         textInput.remove();
@@ -195,6 +200,7 @@ function createTodo(object) {
           if (!array.includes(checkbox.id)) return;
           array[0] = label.textContent;
         })
+        editBtn.removeAttribute("disabled");
         localStorage.setItem(object.id, JSON.stringify(object));
       });
       textInput.addEventListener("keydown", (Event) => {
@@ -206,6 +212,7 @@ function createTodo(object) {
             if (!array.includes(checkbox.id)) return;
             array[0] = label.textContent;
           })
+          editBtn.removeAttribute("disabled");
           localStorage.setItem(object.id, JSON.stringify(object));
         }
       })
@@ -226,6 +233,46 @@ function createTodo(object) {
         })
         localStorage.setItem(object.id, JSON.stringify(object));
       });
+
+      div.addEventListener("mouseover", ()=>{
+        editBtn.removeAttribute("hidden");
+      });
+
+      div.addEventListener("mouseleave", ()=>{
+        editBtn.setAttribute("hidden", "");
+      });
+
+      editBtn.addEventListener("click", ()=>{
+        label.setAttribute("hidden", "");
+        editBtn.setAttribute("disabled", "");
+
+        let labelInput = document.createElement("input");
+        labelInput.setAttribute("type", "text");
+        labelInput.value = label.textContent;
+
+        labelInput.addEventListener("blur", () => {
+          if (labelInput.value.trim() == "") {
+            label.removeAttribute("hidden");
+            editBtn.removeAttribute("disabled");
+            labelInput.remove();
+            return;
+          };
+
+          object.checks.forEach(array => {
+            if (!array.includes(checkbox.id)) return;
+            array[0] = labelInput.value;
+          })
+
+          labelInput.remove();
+          label.textContent = labelInput.value.trim();
+          editBtn.removeAttribute("disabled");
+          label.removeAttribute("hidden");
+
+          localStorage.setItem(object.id, JSON.stringify(object));
+        });
+        div.insertBefore(labelInput, label);
+      });
+      div.appendChild(editBtn);
 
       localStorage.setItem(object.id, JSON.stringify(object));
     });
@@ -609,6 +656,9 @@ function populateChecks(item, todoElement){
     let div = document.createElement("div");
     let checkbox = document.createElement("input");
     let label = document.createElement("label");
+    let editBtn = document.createElement("button");
+    editBtn.textContent = "Edit";
+    editBtn.setAttribute("hidden", "");
     checkbox.setAttribute("type", "checkbox");
     label.textContent = array[0];
     checkbox.id = array[1];
@@ -623,8 +673,48 @@ function populateChecks(item, todoElement){
       localStorage.setItem(item.id, JSON.stringify(item));
     });
 
+    div.addEventListener("mouseover", ()=>{
+      editBtn.removeAttribute("hidden");
+    });
+
+    div.addEventListener("mouseleave", ()=>{
+      editBtn.setAttribute("hidden", "");
+    });
+
+    editBtn.addEventListener("click", ()=>{
+        label.setAttribute("hidden", "");
+        editBtn.setAttribute("disabled", "");
+
+        let labelInput = document.createElement("input");
+        labelInput.setAttribute("type", "text");
+        labelInput.value = label.textContent;
+
+        labelInput.addEventListener("blur", () => {
+          if (labelInput.value.trim() == "") {
+            label.removeAttribute("hidden");
+            editBtn.removeAttribute("disabled");
+            labelInput.remove();
+            return;
+          };
+
+          item.checks.forEach(array => {
+            if (!array.includes(checkbox.id)) return;
+            array[0] = labelInput.value;
+          })
+
+          labelInput.remove();
+          label.textContent = labelInput.value.trim();
+          editBtn.removeAttribute("disabled");
+          label.removeAttribute("hidden");
+
+          localStorage.setItem(item.id, JSON.stringify(item));
+        });
+        div.insertBefore(labelInput, label);
+      });
+
     div.appendChild(checkbox);
     div.appendChild(label);
+    div.appendChild(editBtn);
     div.classList.add("checkbox-container");
     todoElement.insertBefore(div, todoElement.lastChild);
   });
