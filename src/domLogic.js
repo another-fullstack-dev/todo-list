@@ -271,6 +271,9 @@ function createProject(object) {
       clearContent(element);
     })
     projectList.removeChild(li);
+    object.todos.forEach((todo)=>{
+      localStorage.removeItem(todo);
+    })
     localStorage.removeItem(object.id);
     mainProject.dispatchEvent(new MouseEvent("click"));
   });
