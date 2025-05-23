@@ -235,7 +235,123 @@ function createTodo(object) {
     let p = document.createElement("p");
     p.textContent = object.description;
     div.insertBefore(p, footer);
+
+    // adding ability to edit fields
+    p.addEventListener("click", ()=>{
+      p.setAttribute("hidden", "");
+
+      let pInput = document.createElement("textarea");
+
+      pInput.style.minHeight = "300px"
+      pInput.style.maxHeight = "322px"
+      pInput.style.marginTop = "8px"
+
+      pInput.value = object.description;
+
+      pInput.addEventListener("blur", () => {
+        if (pInput.value.trim() == "") {
+          p.removeAttribute("hidden");
+          pInput.remove();
+          return;
+        };
+        object.description = pInput.value.trim();
+        pInput.remove();
+        p.textContent = object.description;
+        p.removeAttribute("hidden");
+        localStorage.setItem(object.id, JSON.stringify(object));
+      })
+
+      div.insertBefore(pInput, p);  
+    })
   }
+
+  h2.addEventListener("click", ()=>{
+    h2.setAttribute("hidden", "");
+
+    let h2Input = document.createElement("input");
+
+    h2Input.setAttribute("type", "text");
+
+    h2Input.style.height = "28px"
+
+    h2Input.value = object.title;
+
+    h2Input.addEventListener("blur", () => {
+      if (h2Input.value.trim() == "") {
+        h2.removeAttribute("hidden");
+        h2Input.remove();
+        return;
+      }
+      object.title = h2Input.value.trim();
+      h2Input.remove();
+      h2.textContent = object.title;
+      h2.removeAttribute("hidden");
+      localStorage.setItem(object.id, JSON.stringify(object));
+    })
+
+    div.insertBefore(h2Input, h2);
+  })
+
+  prioSpan.addEventListener("click", ()=>{
+    prioSpan.setAttribute("hidden", "");
+
+    let prioInput = document.createElement("input");
+    let prioColor = document.createElement("input");
+
+    prioInput.setAttribute("type", "text");
+    prioColor.setAttribute("type", "color");
+    prioColor.style.height = "20px"
+
+    prioInput.value = object.priority;
+    prioColor.value = object.priorityColor;
+
+    prioInput.addEventListener("blur", () => { // todo: if we click on color input while prioInput is focused, blur is triggered (unwanted effect)
+      if (prioInput.value.trim() == "") {
+        prioSpan.removeAttribute("hidden");
+        prioInput.remove();
+        prioColor.remove();
+        return;
+      }
+      object.priority = prioInput.value.trim();
+      object.priorityColor = prioColor.value;
+      prioInput.remove();
+      prioColor.remove();
+      prioSpan.textContent = object.priority;
+      if (object.priorityColor != "#000000") {
+        prioSpan.style.backgroundColor = object.priorityColor;
+      }
+      prioSpan.removeAttribute("hidden");
+      localStorage.setItem(object.id, JSON.stringify(object));
+    })
+
+    footer.insertBefore(prioInput, prioSpan);
+    footer.insertBefore(prioColor, prioSpan);
+  });
+
+  dueSpan.addEventListener("click", ()=>{
+    dueSpan.setAttribute("hidden", "");
+
+    let dueInput = document.createElement("input");
+    dueInput.setAttribute("type", "datetime-local");
+    dueInput.value = object.timestamp;
+
+    dueInput.addEventListener("blur", () => {
+      if (dueInput.value == "") {
+        dueSpan.removeAttribute("hidden");
+        dueInput.remove();
+        return;
+      };
+      object.timestamp = dueInput.value;
+      object.dueDate = getDate(object.timestamp);
+      dueSpan.textContent = object.dueDate;
+      dueInput.remove();
+      dueSpan.removeAttribute("hidden");
+      if (!compareAsc(object.timestamp, CURRENT_TIME) != 1) object.expired = false;
+      localStorage.setItem(object.id, JSON.stringify(object));
+    });
+
+    footer.insertBefore(dueInput, dueSpan);
+  });
 
   h2.textContent = object.title;
   dueSpan.textContent = object.dueDate;

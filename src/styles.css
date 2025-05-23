@@ -156,3 +156,7 @@ dialog {
     flex: 1;
     height: 32px;
 }
+
+.todo > textarea {
+    resize: none;
+}
