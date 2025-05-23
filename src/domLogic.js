@@ -573,6 +573,10 @@ todoForm.addEventListener("submit", () => {
 
   let todoElement = null;
 
+  if (compareAsc(todo.timestamp, CURRENT_TIME) != 1){
+    todo.expired = true;
+  }
+
   if (todo.timestamp){
     todoElement = sortDues(timestamp, todo);
   } else {
