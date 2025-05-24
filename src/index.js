@@ -1,8 +1,8 @@
 import "./styles.css";
-import { createTodo, createProject, getDate, sortDues, hideEmpty, contentAll, populateChecks, totalPageLayout } from "./domLogic";
-import { compareAsc, getMonth, getWeek, setDefaultOptions } from "date-fns";
+import { contentAll, totalPageLayout } from "./domLogic";
+import { setDefaultOptions } from "date-fns";
 
-setDefaultOptions({ weekStartsOn: 1 }) // set week start on monday
+setDefaultOptions({ weekStartsOn: 1 }); // set week start on monday
 
 const CURRENT_TIME = new Date();
 
@@ -44,4 +44,13 @@ class Project {
 currentProject.textContent = "Main page";
 totalPageLayout();
 
-export { content, projectDiv, projectList, projectSelect, currentProject, CURRENT_TIME, Todo, Project };
+export {
+  content,
+  projectDiv,
+  projectList,
+  projectSelect,
+  currentProject,
+  CURRENT_TIME,
+  Todo,
+  Project,
+};

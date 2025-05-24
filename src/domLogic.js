@@ -2,20 +2,26 @@ import {
   content,
   projectDiv,
   projectList,
-  projectSelect,
   currentProject,
   Todo,
   Project,
   CURRENT_TIME,
 } from "./index";
 
-import { compareAsc, formatRelative, isSameDay, isSameMinute, isSameMonth, isSameWeek, isTomorrow } from "date-fns";
+import {
+  compareAsc,
+  formatRelative,
+  isSameDay,
+  isSameMonth,
+  isSameWeek,
+  isTomorrow,
+} from "date-fns";
 
 const dialogCreateTodo = document.querySelector(".dialog-todo");
 const dialogCreateProject = document.querySelector(".dialog-project");
 const addTodoBtn = document.querySelector(".add");
 const addProjectBtn = document.querySelector(".btn-add-project");
-const closeModal = document.querySelectorAll(".close"); // idiot
+const closeModal = document.querySelectorAll(".close"); // idiot (DO NOT USE)
 const prioTextInput = document.querySelector("#priority");
 const prioColorInput = document.querySelector("#prio-color");
 const dateInput = document.querySelector("#due-date");
@@ -25,45 +31,48 @@ const dialogNuke = document.querySelector(".dialog-nuke");
 const dialogTodoDescription = document.querySelector("#description");
 const dialogTodoDescLabel = document.querySelector(".desc-label");
 const contentDueToday = document.querySelector(".due-today > .due-content");
-const contentDueTomorrow = document.querySelector(".due-tomorrow > .due-content");
+const contentDueTomorrow = document.querySelector(
+  ".due-tomorrow > .due-content"
+);
 const contentDueWeek = document.querySelector(".due-week > .due-content");
 const contentDueMonth = document.querySelector(".due-month > .due-content");
 const contentDueLater = document.querySelector(".due-later > .due-content");
 const contentDueExpired = document.querySelector(".due-expired > .due-content");
-const contentAll = Array.from([ 
+const contentAll = Array.from([
   contentDueToday,
   contentDueTomorrow,
   contentDueWeek,
   contentDueMonth,
   contentDueLater,
-  contentDueExpired])
+  contentDueExpired,
+]);
 
 const closeNukeBtn = document.querySelector(".nuke-close");
-closeNukeBtn.addEventListener("click", ()=>{
+closeNukeBtn.addEventListener("click", () => {
   dialogNuke.close();
-})
+});
 
 const confirmNukeBtn = document.querySelector(".nuke-confirm");
 confirmNukeBtn.addEventListener("click", () => {
   localStorage.clear();
   dialogNuke.close();
   location.reload();
-})
+});
 
 const nukeBtn = document.querySelector(".nuke");
-nukeBtn.addEventListener("click", ()=>{
+nukeBtn.addEventListener("click", () => {
   dialogNuke.showModal();
-})
+});
 
 const checkboxInput = document.querySelector("#checklist");
-checkboxInput.addEventListener("click", ()=>{
-  if (checkboxInput.checked){
+checkboxInput.addEventListener("click", () => {
+  if (checkboxInput.checked) {
     dialogTodoDescription.setAttribute("hidden", "");
     dialogTodoDescLabel.setAttribute("hidden", "");
   } else {
     dialogTodoDescription.removeAttribute("hidden");
     dialogTodoDescLabel.removeAttribute("hidden");
-  };
+  }
 });
 
 let inputsTodo = document.querySelectorAll(".form-todo > input");
@@ -83,26 +92,26 @@ removeCompletedBtn.addEventListener("click", () => {
     if (item.completed) deleted.push(item.id);
 
     if (item.type == "project") projects.push(item);
-  };
+  }
 
-  deleted.forEach((todo)=>{
-    projects.forEach((project)=>{
-      if(project.todos.includes(todo)){
+  deleted.forEach((todo) => {
+    projects.forEach((project) => {
+      if (project.todos.includes(todo)) {
         project.todos.splice(project.todos.indexOf(todo), 1);
         localStorage.setItem(project.id, JSON.stringify(project));
-      };
-    })
+      }
+    });
     localStorage.removeItem(todo);
   });
-  
+
   location.reload();
 });
 
 const mainProject = document.querySelector(".main-page-li");
 mainProject.addEventListener("click", () => {
-  contentAll.forEach((element)=>{
+  contentAll.forEach((element) => {
     clearContent(element);
-  })
+  });
   currentProject.textContent = "Main page";
   localStorage.removeItem("project");
   for (let i = 0; i < localStorage.length; i++) {
@@ -111,18 +120,18 @@ mainProject.addEventListener("click", () => {
       continue;
     }
     let todoElement = null;
-    if (item.timestamp){
+    if (item.timestamp) {
       todoElement = sortDues(item.timestamp, item);
     } else {
       todoElement = content.appendChild(createTodo(item));
     }
-    if (item.type == "checklist"){
+    if (item.type == "checklist") {
       populateChecks(item, todoElement);
     }
   }
-  contentAll.forEach((content)=>{
+  contentAll.forEach((content) => {
     if (content.lastChild) content.parentElement.removeAttribute("hidden");
-  })
+  });
 });
 
 function createTodo(object) {
@@ -157,11 +166,11 @@ function createTodo(object) {
         parent.setAttribute("hidden", "");
       } else {
         parent.parentElement.setAttribute("hidden", "");
-      };
-    };
-    
+      }
+    }
+
     localStorage.removeItem(object.id);
-    if (object.project){
+    if (object.project) {
       let project = JSON.parse(localStorage.getItem(object.project));
       project.todos.splice(object.index, 1);
       localStorage.setItem(project.id, JSON.stringify(project));
@@ -171,11 +180,11 @@ function createTodo(object) {
   div.appendChild(h2);
   div.appendChild(footer);
 
-  if (object.type == "checklist"){
+  if (object.type == "checklist") {
     let container = document.createElement("div");
     let addCheck = document.createElement("button");
     addCheck.textContent = "+";
-    addCheck.addEventListener("click", ()=>{
+    addCheck.addEventListener("click", () => {
       let div = document.createElement("div");
       let checkbox = document.createElement("input");
       let label = document.createElement("label");
@@ -186,36 +195,36 @@ function createTodo(object) {
       editBtn.setAttribute("hidden", "");
       textInput.setAttribute("type", "text");
       textInput.style.width = "200px";
-      textInput.addEventListener("blur", ()=>{
+      textInput.addEventListener("blur", () => {
         label.textContent = textInput.value.trim();
-        if (label.textContent == ""){
+        if (label.textContent == "") {
           checkbox.remove();
           div.remove();
           label.remove();
           editBtn.removeAttribute("disabled");
           return;
-        };
+        }
         textInput.remove();
-        object.checks.forEach(array => {
+        object.checks.forEach((array) => {
           if (!array.includes(checkbox.id)) return;
           array[0] = label.textContent;
-        })
+        });
         editBtn.removeAttribute("disabled");
         localStorage.setItem(object.id, JSON.stringify(object));
       });
       textInput.addEventListener("keydown", (Event) => {
-        if (Event.key === "Enter"){
+        if (Event.key === "Enter") {
           label.textContent = textInput.value.trim();
           if (label.textContent == "") return;
           textInput.remove();
-          object.checks.forEach(array => {
+          object.checks.forEach((array) => {
             if (!array.includes(checkbox.id)) return;
             array[0] = label.textContent;
-          })
+          });
           editBtn.removeAttribute("disabled");
           localStorage.setItem(object.id, JSON.stringify(object));
         }
-      })
+      });
       checkbox.setAttribute("type", "checkbox");
       checkbox.id = generateId();
       label.setAttribute("for", checkbox.id);
@@ -226,23 +235,23 @@ function createTodo(object) {
       container.appendChild(div);
       object.checks.push([label.textContent, checkbox.id, checkbox.checked]);
 
-      checkbox.addEventListener("click", ()=>{ 
-        object.checks.forEach(array => {
+      checkbox.addEventListener("click", () => {
+        object.checks.forEach((array) => {
           if (!array.includes(checkbox.id)) return;
           array[2] = checkbox.checked;
-        })
+        });
         localStorage.setItem(object.id, JSON.stringify(object));
       });
 
-      div.addEventListener("mouseover", ()=>{
+      div.addEventListener("mouseover", () => {
         editBtn.removeAttribute("hidden");
       });
 
-      div.addEventListener("mouseleave", ()=>{
+      div.addEventListener("mouseleave", () => {
         editBtn.setAttribute("hidden", "");
       });
 
-      editBtn.addEventListener("click", ()=>{
+      editBtn.addEventListener("click", () => {
         label.setAttribute("hidden", "");
         editBtn.setAttribute("disabled", "");
 
@@ -256,12 +265,12 @@ function createTodo(object) {
             editBtn.removeAttribute("disabled");
             labelInput.remove();
             return;
-          };
+          }
 
-          object.checks.forEach(array => {
+          object.checks.forEach((array) => {
             if (!array.includes(checkbox.id)) return;
             array[0] = labelInput.value;
-          })
+          });
 
           labelInput.remove();
           label.textContent = labelInput.value.trim();
@@ -284,14 +293,14 @@ function createTodo(object) {
     div.insertBefore(p, footer);
 
     // adding ability to edit fields
-    p.addEventListener("click", ()=>{
+    p.addEventListener("click", () => {
       p.setAttribute("hidden", "");
 
       let pInput = document.createElement("textarea");
 
-      pInput.style.minHeight = "300px"
-      pInput.style.maxHeight = "322px"
-      pInput.style.marginTop = "8px"
+      pInput.style.minHeight = "300px";
+      pInput.style.maxHeight = "322px";
+      pInput.style.marginTop = "8px";
 
       pInput.value = object.description;
 
@@ -300,19 +309,19 @@ function createTodo(object) {
           p.removeAttribute("hidden");
           pInput.remove();
           return;
-        };
+        }
         object.description = pInput.value.trim();
         pInput.remove();
         p.textContent = object.description;
         p.removeAttribute("hidden");
         localStorage.setItem(object.id, JSON.stringify(object));
-      })
+      });
 
-      div.insertBefore(pInput, p);  
-    })
+      div.insertBefore(pInput, p);
+    });
   }
 
-  h2.addEventListener("click", ()=>{
+  h2.addEventListener("click", () => {
     h2.setAttribute("hidden", "");
 
     let h2Input = document.createElement("input");
@@ -320,7 +329,7 @@ function createTodo(object) {
     h2Input.setAttribute("type", "text");
     h2Input.setAttribute("maxlength", "40");
 
-    h2Input.style.height = "28px"
+    h2Input.style.height = "28px";
 
     h2Input.value = object.title;
 
@@ -335,12 +344,12 @@ function createTodo(object) {
       h2.textContent = object.title;
       h2.removeAttribute("hidden");
       localStorage.setItem(object.id, JSON.stringify(object));
-    })
+    });
 
     div.insertBefore(h2Input, h2);
-  })
+  });
 
-  prioSpan.addEventListener("click", ()=>{
+  prioSpan.addEventListener("click", () => {
     prioSpan.setAttribute("hidden", "");
 
     let prioInput = document.createElement("input");
@@ -349,12 +358,13 @@ function createTodo(object) {
     prioInput.setAttribute("type", "text");
     prioInput.setAttribute("maxlength", "20");
     prioColor.setAttribute("type", "color");
-    prioColor.style.height = "20px"
+    prioColor.style.height = "20px";
 
     prioInput.value = object.priority;
     prioColor.value = object.priorityColor;
 
-    prioInput.addEventListener("blur", () => { // todo: if we click on color input while prioInput is focused, blur is triggered (unwanted effect)
+    prioInput.addEventListener("blur", () => {
+      // todo: if we click on color input while prioInput is focused, blur is triggered (unwanted effect)
       if (prioInput.value.trim() == "") {
         prioSpan.removeAttribute("hidden");
         prioInput.remove();
@@ -371,13 +381,13 @@ function createTodo(object) {
       }
       prioSpan.removeAttribute("hidden");
       localStorage.setItem(object.id, JSON.stringify(object));
-    })
+    });
 
     footer.insertBefore(prioInput, prioSpan);
     footer.insertBefore(prioColor, prioSpan);
   });
 
-  dueSpan.addEventListener("click", ()=>{
+  dueSpan.addEventListener("click", () => {
     dueSpan.setAttribute("hidden", "");
 
     let dueInput = document.createElement("input");
@@ -389,25 +399,26 @@ function createTodo(object) {
         dueSpan.removeAttribute("hidden");
         dueInput.remove();
         return;
-      };
+      }
       object.timestamp = dueInput.value;
       object.dueDate = getDate(object.timestamp);
       dueSpan.textContent = object.dueDate;
       dueInput.remove();
       dueSpan.removeAttribute("hidden");
-      if (!compareAsc(object.timestamp, CURRENT_TIME) != 1) object.expired = false;
-      contentAll.forEach((element)=>{
+      if (!compareAsc(object.timestamp, CURRENT_TIME) != 1)
+        object.expired = false;
+      contentAll.forEach((element) => {
         clearContent(element);
-      })
+      });
       totalPageLayout();
-      contentAll.forEach((element)=>{
+      contentAll.forEach((element) => {
         if (element === content) return;
         if (element.lastChild) {
           element.parentElement.removeAttribute("hidden");
         } else {
           element.parentElement.setAttribute("hidden", "");
         }
-      })
+      });
       localStorage.setItem(object.id, JSON.stringify(object));
     });
 
@@ -442,15 +453,15 @@ function createProject(object) {
   let btn = document.createElement("button");
   btn.textContent = "X";
   btn.setAttribute("hidden", "");
-  btn.addEventListener("click", (Event) => { // todo: since when does it not deletes all of the todos in the project?
+  btn.addEventListener("click", (Event) => {
     Event.stopPropagation();
-    contentAll.forEach((element)=>{
+    contentAll.forEach((element) => {
       clearContent(element);
-    })
+    });
     projectList.removeChild(li);
-    object.todos.forEach((todo)=>{
+    object.todos.forEach((todo) => {
       localStorage.removeItem(todo);
-    })
+    });
     localStorage.removeItem(object.id);
     mainProject.dispatchEvent(new MouseEvent("click"));
   });
@@ -458,36 +469,40 @@ function createProject(object) {
   li.appendChild(btn);
   p.textContent = object.title;
   li.addEventListener("click", () => {
-    contentAll.forEach((element)=>{
+    contentAll.forEach((element) => {
       clearContent(element);
-    })
+    });
     localStorage.setItem("project", object.id);
-    
+
     // i should probably rewrite this
     JSON.parse(
       localStorage.getItem(localStorage.getItem("project"))
     ).todos.forEach((id) => {
       let todoElement = null;
-      if (JSON.parse(localStorage.getItem(id)).timestamp){
-        todoElement = sortDues(JSON.parse(localStorage.getItem(id)).timestamp, JSON.parse(localStorage.getItem(id)));
+      if (JSON.parse(localStorage.getItem(id)).timestamp) {
+        todoElement = sortDues(
+          JSON.parse(localStorage.getItem(id)).timestamp,
+          JSON.parse(localStorage.getItem(id))
+        );
       } else {
-        todoElement = content.appendChild(createTodo(JSON.parse(localStorage.getItem(id))));
+        todoElement = content.appendChild(
+          createTodo(JSON.parse(localStorage.getItem(id)))
+        );
       }
-      if (JSON.parse(localStorage.getItem(id)).type == "checklist"){
-        populateChecks(JSON.parse(localStorage.getItem(id)), todoElement)
+      if (JSON.parse(localStorage.getItem(id)).type == "checklist") {
+        populateChecks(JSON.parse(localStorage.getItem(id)), todoElement);
       }
     });
     currentProject.textContent = p.textContent;
 
-    contentAll.forEach((element)=>{
+    contentAll.forEach((element) => {
       if (element === content) return;
       if (element.lastChild) {
         element.parentElement.removeAttribute("hidden");
       } else {
         element.parentElement.setAttribute("hidden", "");
       }
-
-    })
+    });
   });
 
   li.addEventListener("mouseover", () => {
@@ -511,11 +526,13 @@ addProjectBtn.addEventListener("click", () => {
   dialogCreateProject.showModal();
 });
 
-// actual idiot
-closeModal.forEach((button) => { // better way to do this?
+// actual idiot (DO NOT USE)
+closeModal.forEach((button) => {
+  // better way to do this?
   button.addEventListener("click", () => {
     button.parentElement.parentElement.parentElement.close(); // ok
-    inputs.forEach((node) => { // doesnt look like it belongs here
+    inputs.forEach((node) => {
+      // doesnt look like it belongs here
       node.value = "";
     });
     checkboxInput.checked = false;
@@ -529,7 +546,7 @@ projectForm.addEventListener("submit", () => {
     array.push(node.value);
     node.value = "";
   });
-  
+
   let project = new Project(array[0]);
   project.id = generateId();
 
@@ -557,7 +574,7 @@ todoForm.addEventListener("submit", () => {
   if (checkboxInput.checked) {
     type = "checklist";
     checkboxInput.checked = false;
-  };
+  }
 
   let todo = new Todo(array[0], array[1], array[2], array[3], type);
   todo.priorityColor = prioColorInput.value;
@@ -569,28 +586,28 @@ todoForm.addEventListener("submit", () => {
 
   todo.id = generateId();
 
-  if (todo.type == "checklist"){
+  if (todo.type == "checklist") {
     todo.checks = [];
   }
 
   let todoElement = null;
 
-  if (compareAsc(todo.timestamp, CURRENT_TIME) != 1){
+  if (compareAsc(todo.timestamp, CURRENT_TIME) != 1) {
     todo.expired = true;
   }
 
-  if (todo.timestamp){
+  if (todo.timestamp) {
     todoElement = sortDues(timestamp, todo);
   } else {
     todoElement = content.appendChild(createTodo(todo));
   }
 
-  todoElement.parentElement.parentElement.removeAttribute("hidden"); // i hate myself
- 
+  todoElement.parentElement.parentElement.removeAttribute("hidden");
+
   if (localStorage.getItem("project")) {
     let project = JSON.parse(
       localStorage.getItem(localStorage.getItem("project"))
-    ); // its 12 pm im not even going to question it
+    );
     project.todos.push(todo.id);
     todo.index = project.todos.indexOf(todo.id);
     todo.project = project.id;
@@ -614,7 +631,7 @@ function getDate(dateTime) {
   date.pop();
   date.push(time.shift());
   time = time[0].split(":");
-  date[1] = date[1] - 1; // month indices begin at 0 lol okay
+  date[1] = date[1] - 1; // month indices begin at 0
   let finalDate = formatRelative(
     new Date(date[0], date[1], date[2], time[0], time[1]),
     CURRENT_TIME
@@ -623,19 +640,19 @@ function getDate(dateTime) {
   return finalDate;
 }
 
- // oh well
-function sortDues(timestamp, todo){
-  if (todo.expired){
+// oh well
+function sortDues(timestamp, todo) {
+  if (todo.expired) {
     return contentDueExpired.appendChild(createTodo(todo));
-  } else if (isSameDay(timestamp, CURRENT_TIME)){
+  } else if (isSameDay(timestamp, CURRENT_TIME)) {
     return contentDueToday.appendChild(createTodo(todo));
-  } else if (isSameWeek(timestamp, CURRENT_TIME)){
-    if (isTomorrow(timestamp)){
+  } else if (isSameWeek(timestamp, CURRENT_TIME)) {
+    if (isTomorrow(timestamp)) {
       return contentDueTomorrow.appendChild(createTodo(todo));
     } else {
       return contentDueWeek.appendChild(createTodo(todo));
     }
-  } else if (isSameMonth(timestamp, CURRENT_TIME)){
+  } else if (isSameMonth(timestamp, CURRENT_TIME)) {
     return contentDueMonth.appendChild(createTodo(todo));
   } else {
     return contentDueLater.appendChild(createTodo(todo));
@@ -643,7 +660,7 @@ function sortDues(timestamp, todo){
 }
 
 // generate a unique id and use it to reference the object
-function generateId(){
+function generateId() {
   let id = Math.random().toString();
   id = id.split(".");
   id = id[1];
@@ -651,8 +668,8 @@ function generateId(){
   return id;
 }
 
-function populateChecks(item, todoElement){
-  item.checks.forEach(array => {
+function populateChecks(item, todoElement) {
+  item.checks.forEach((array) => {
     if (array[0] === "") {
       item.checks.splice(item.checks.indexOf(array), 1);
       localStorage.setItem(item.id, JSON.stringify(item));
@@ -671,52 +688,52 @@ function populateChecks(item, todoElement){
     checkbox.checked = array[2];
     label.setAttribute("for", checkbox.id);
 
-    checkbox.addEventListener("click", ()=>{ 
-      item.checks.forEach(array => {
+    checkbox.addEventListener("click", () => {
+      item.checks.forEach((array) => {
         if (!array.includes(checkbox.id)) return;
         array[2] = checkbox.checked;
-      })
+      });
       localStorage.setItem(item.id, JSON.stringify(item));
     });
 
-    div.addEventListener("mouseover", ()=>{
+    div.addEventListener("mouseover", () => {
       editBtn.removeAttribute("hidden");
     });
 
-    div.addEventListener("mouseleave", ()=>{
+    div.addEventListener("mouseleave", () => {
       editBtn.setAttribute("hidden", "");
     });
 
-    editBtn.addEventListener("click", ()=>{
-        label.setAttribute("hidden", "");
-        editBtn.setAttribute("disabled", "");
+    editBtn.addEventListener("click", () => {
+      label.setAttribute("hidden", "");
+      editBtn.setAttribute("disabled", "");
 
-        let labelInput = document.createElement("input");
-        labelInput.setAttribute("type", "text");
-        labelInput.value = label.textContent;
+      let labelInput = document.createElement("input");
+      labelInput.setAttribute("type", "text");
+      labelInput.value = label.textContent;
 
-        labelInput.addEventListener("blur", () => {
-          if (labelInput.value.trim() == "") {
-            label.removeAttribute("hidden");
-            editBtn.removeAttribute("disabled");
-            labelInput.remove();
-            return;
-          };
-
-          item.checks.forEach(array => {
-            if (!array.includes(checkbox.id)) return;
-            array[0] = labelInput.value;
-          })
-
-          labelInput.remove();
-          label.textContent = labelInput.value.trim();
-          editBtn.removeAttribute("disabled");
+      labelInput.addEventListener("blur", () => {
+        if (labelInput.value.trim() == "") {
           label.removeAttribute("hidden");
+          editBtn.removeAttribute("disabled");
+          labelInput.remove();
+          return;
+        }
 
-          localStorage.setItem(item.id, JSON.stringify(item));
+        item.checks.forEach((array) => {
+          if (!array.includes(checkbox.id)) return;
+          array[0] = labelInput.value;
         });
-        div.insertBefore(labelInput, label);
+
+        labelInput.remove();
+        label.textContent = labelInput.value.trim();
+        editBtn.removeAttribute("disabled");
+        label.removeAttribute("hidden");
+
+        localStorage.setItem(item.id, JSON.stringify(item));
       });
+      div.insertBefore(labelInput, label);
+    });
 
     div.appendChild(checkbox);
     div.appendChild(label);
@@ -727,34 +744,42 @@ function populateChecks(item, todoElement){
 }
 
 // im so lost in those
-function totalPageLayout(){
+function totalPageLayout() {
   for (let i = 0; i < localStorage.length; i++) {
     let item = JSON.parse(localStorage.getItem(localStorage.key(i)));
     if (item.type == "project") {
       projectList.appendChild(createProject(item));
       continue;
-    } else if (localStorage.key(i) == "project"){
+    } else if (localStorage.key(i) == "project") {
       continue;
     }
-  
+
     let todoElement = null;
-  
-    if (item.timestamp){
+
+    if (item.timestamp) {
       item.dueDate = getDate(item.timestamp);
-      if(compareAsc(item.timestamp, CURRENT_TIME) != 1){
-        item.expired = true; 
+      if (compareAsc(item.timestamp, CURRENT_TIME) != 1) {
+        item.expired = true;
         localStorage.setItem(item.id, JSON.stringify(item));
-      };
-      todoElement = sortDues(item.timestamp, item)
+      }
+      todoElement = sortDues(item.timestamp, item);
     } else {
       todoElement = content.appendChild(createTodo(item));
-    } 
+    }
     todoElement.parentElement.parentElement.removeAttribute("hidden");
-  
-    if (item.type == "checklist"){
-      populateChecks(item, todoElement)
+
+    if (item.type == "checklist") {
+      populateChecks(item, todoElement);
     }
   }
 }
 
-export { createTodo, createProject, getDate, sortDues, populateChecks, totalPageLayout, contentAll};
+export {
+  createTodo,
+  createProject,
+  getDate,
+  sortDues,
+  populateChecks,
+  totalPageLayout,
+  contentAll,
+};
